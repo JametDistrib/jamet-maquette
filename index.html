@@ -44,6 +44,7 @@ p{margin:0;line-height:1.6}
 .sec{padding:64px 0;border-top:1px solid var(--rule)}
 .sec:first-child{border-top:0}
 .cols{display:grid;gap:56px}
+.cols>*{min-width:0}
 @media(min-width:900px){.cols.c2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
  .cols.c21{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}}
 .stack{display:flex;flex-direction:column;gap:22px}
@@ -119,6 +120,9 @@ p{margin:0;line-height:1.6}
 [data-theme="a"][data-mode="nuit"]{--ground:#0F1214;--panel:#171B1E;--imgbg:#E9EAE6;--ink:#E7E5DC;--ink2:#9AA0A3;
   --rule:#2E3438;--brand:#12294B;--brandfg:#E7E5DC;--acc:#E0705A;--accfg:#0F1214;--btnb:#E7E5DC;
   --cardbg:transparent;--cardbd:1px solid #2E3438}
+[data-theme="a"] h1{font-size:clamp(30px,3.7vw,54px)}
+[data-theme="a"] h2{font-size:clamp(24px,2.7vw,36px)}
+[data-theme="a"] h1,[data-theme="a"] h2,[data-theme="a"] h3{overflow-wrap:break-word}
 [data-theme="a"] .grid3{border:1px solid var(--rule)}
 [data-theme="a"] .mcard{border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 [data-theme="a"] .mcard h3{text-transform:uppercase;line-height:1.15}
@@ -274,7 +278,7 @@ function home(){
         <div class="cols c21" style="gap:40px;align-items:center">
           <div class="stack" style="gap:14px">
             <div class="lab" style="color:inherit;opacity:.8">Mise à disposition — toute l’Île-de-France</div>
-            <h1 style="font-size:clamp(48px,7vw,96px)">Dépôt<br>gratuit</h1>
+            <h1 style="font-size:clamp(30px,4.2vw,70px)">Dépôt<br>gratuit</h1>
           </div>
           <div class="stack" style="gap:12px;font-size:17px">
             <div style="height:1px;background:currentColor;opacity:.5"></div>
