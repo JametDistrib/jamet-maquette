@@ -110,9 +110,10 @@ p{margin:0;line-height:1.6}
 .tour.big .mapbox svg{width:auto;height:min(70vh,620px);max-width:100%;margin:0 auto;order:0}
 .tour.big .log{order:1}
 .tour.big .side{order:2}
+.tour.big .inset{order:3;margin:14px 16px 0}
 .tour.big .log{margin:14px 16px 0}
 .tour.big .side{margin:14px 16px 0}
-.mcap{position:absolute;right:16px;top:14px}
+.mcap{font-size:10.5px;margin-bottom:-4px}
 .tour.big .log{min-height:0}
 .tour.big .log h4{padding:11px 14px}
 .tour.big .log ul{max-height:none}
@@ -120,9 +121,11 @@ p{margin:0;line-height:1.6}
 .tour.big .log li time{font-size:10.5px}
 .side{display:flex;flex-direction:column;gap:13px}
 .side .legend{border:1px solid var(--rule);background:var(--panel)}
-.side .metric{border:1px solid var(--rule);background:var(--panel);padding:12px 14px}
-.inset{border:1px solid var(--rule);background:var(--panel);padding:11px 12px 8px}
-.inset .lab{font-size:10px;margin-bottom:6px}
+.side .metric{border:1px solid var(--rule);background:var(--panel);padding:10px 13px}
+.side .legend>div{padding:6px 13px}
+.side .metric #delay{font-size:22px !important}
+.inset{border:1px solid var(--rule);background:var(--panel);padding:9px 11px 7px}
+.inset .lab{font-size:9.5px;margin-bottom:5px}
 .inset .dep{stroke-width:.9}
 .side .trow{margin:0}
 .side .trow .btn2{width:100%;justify-content:center;text-align:center}
@@ -133,8 +136,9 @@ p{margin:0;line-height:1.6}
   .tour.big .side{position:absolute;left:20px;top:20px;width:246px;margin:0;z-index:2}
   .tour.big .log{position:absolute;right:20px;top:20px;width:298px;margin:0;height:auto;
     max-height:calc(100% - 40px);z-index:2;box-shadow:0 2px 22px rgba(0,0,0,.07)}
-  .tour.big .side .legend,.tour.big .side .metric,.tour.big .side .inset{box-shadow:0 2px 22px rgba(0,0,0,.07)}
-  .tour.big .mcap{right:auto;left:20px;bottom:20px;top:auto}
+  .tour.big .side .legend,.tour.big .side .metric,.tour.big .inset{box-shadow:0 2px 22px rgba(0,0,0,.07)}
+  @media(max-height:790px){.tour.big .inset{display:none}}
+  .tour.big .inset{position:absolute;left:20px;bottom:20px;width:224px;margin:0;z-index:2}
 }
 @media(max-width:980px){.mapbox svg{height:min(52vh,440px)}}
 .dep{fill:var(--mapfill);stroke:var(--maprule);stroke-width:1.1;transition:fill .4s ease}
@@ -414,14 +418,14 @@ const metricBox=()=>`<div class="lab">Interventions</div>
 const tourMarkup=(compact)=>(FINALB&&!compact)
  ? `<div class="tour big">
      <div class="mapbox"><svg id="map" viewBox="0 0 920 860" style="display:block"></svg>
-       <div class="mcap lab">Une matinée type</div>
        <div class="side">
+         <div class="mcap lab">Une matinée type</div>
          <div class="legend" id="legend"></div>
          <div class="metric">${metricBox()}</div>
-         <div class="row trow">${tourCtrl()}</div>
-         <div class="inset"><div class="lab">Zoom · Paris et proche banlieue</div>
-           <svg id="map2" viewBox="312 196 176 152" style="display:block;width:100%;aspect-ratio:176/152;height:auto"></svg></div></div>
-       <div class="log"><h4>Journal du matin</h4><ul id="logl"></ul></div></div>
+         <div class="row trow">${tourCtrl()}</div></div>
+       <div class="log"><h4>Journal du matin</h4><ul id="logl"></ul></div>
+       <div class="inset"><div class="lab">Zoom · Paris et proche banlieue</div>
+         <svg id="map2" viewBox="312 196 176 152" style="display:block;width:100%;aspect-ratio:176/152;height:auto"></svg></div></div>
    </div>`
  : `<div class="tour">
   ${mapBox()}
