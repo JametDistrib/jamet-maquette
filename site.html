@@ -98,6 +98,8 @@ p{margin:0;line-height:1.6}
 .tour{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:26px;align-items:start}
 @media(max-width:980px){.tour{grid-template-columns:1fr}}
 .mapbox{border:1px solid var(--rule);background:var(--panel);position:relative}
+.mapbox svg{width:100%;height:min(58vh,580px)}
+@media(max-width:980px){.mapbox svg{height:min(52vh,460px)}}
 .dep{fill:var(--mapfill);stroke:var(--maprule);stroke-width:1.2;transition:fill .4s ease}
 .dep.hot{fill:color-mix(in srgb, var(--acc) 20%, var(--mapfill))}
 .log{border:1px solid var(--rule);background:var(--panel);display:flex;flex-direction:column;min-height:340px}
@@ -171,7 +173,7 @@ p{margin:0;line-height:1.6}
   --h1:clamp(36px,4.6vw,66px);--h2:clamp(26px,3.2vw,44px);--btnfs:16px;--btnls:0;--btntt:none}
 [data-theme="b"][data-mode="nuit"]{--ground:#13100C;--panel:#1C1712;--sunk:#0D0A07;--imgbg:#EAE4D9;--ink:#F4EFE6;--ink2:#A99C8B;
   --rule:rgba(244,239,230,.14);--brand:#1C1712;--brandfg:#F4EFE6;--acc:#E9A94A;--accfg:#13100C;--btnb:rgba(244,239,230,.3);
-  --cardbg:#1C1712;--cardbd:1px solid rgba(244,239,230,.12);--mapfill:#1C1712;--maprule:#3B332A;--spiral:#8A7C68;--shelf:#3B332A;--glass:#241E18;--metal:#0D0A07}
+  --cardbg:#1C1712;--cardbd:1px solid rgba(244,239,230,.12);--mapfill:#241E18;--maprule:#514639;--spiral:#8A7C68;--shelf:#3B332A;--glass:#241E18;--metal:#0D0A07}
 [data-theme="b"][data-mode="jour"]{--ground:#F6F2EA;--panel:#FFFFFF;--sunk:#EDE7DC;--imgbg:#EDE7DC;--ink:#1A150F;--ink2:#6B6154;
   --rule:rgba(26,21,15,.15);--brand:#FFFFFF;--brandfg:#1A150F;--acc:#8A5A10;--accfg:#FFFFFF;--btnb:rgba(26,21,15,.3);
   --cardbg:#FFFFFF;--cardbd:1px solid rgba(26,21,15,.12);--mapfill:#EDE7DC;--maprule:#C9BFB1;--spiral:#8A7C68;--shelf:#C9BFB1;--glass:#E5DCCC;--metal:#2A241D}
@@ -254,32 +256,32 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const PITCH={
-  a:"Proposition A — le fournisseur qui montre ses procédés. Extraction en planche technique, tournée en preuve.",
-  b:"Proposition B — le désir de la pause. L'extraction ouvre le site, la tournée reste discrète.",
+  a:"Proposition A — le fournisseur qui montre ses procédés. Planche technique, extraction au défilement, tournée en preuve.",
+  b:"Proposition B — le désir de la pause. Le générique ouvre le site, la tournée arrive juste après.",
   c:"Proposition C — la preuve humaine. La tournée est l'accroche, le devis se compose comme un distributeur."
 };
 const MACHINES=[
  {slug:'petite-cafe',code:'A1',nom:'Petite machine à café',img:'petite',acc:'Posée sur un meuble. Pour un accueil, un bureau, une équipe de dix.',
-  long:'Elle tient sur un plan de travail et ne demande qu’une prise. C’est celle qu’on installe dans les accueils, les cabinets et les petites équipes.'},
+  long:'Elle tient sur un plan de travail et ne demande qu’une prise de courant. C’est celle qu’on installe dans les accueils, les cabinets et les équipes d’une dizaine de personnes : grains fraîchement moulus, une tasse à la fois, sans encombrer le couloir.'},
  {slug:'grande-cafe',code:'A2',nom:'Grande machine à café',img:'grande',acc:'Sur pied, forte autonomie. Pour les sites où ça défile toute la journée.',
-  long:'Celle qu’on installe quand la pause ne s’arrête jamais : l’équipe du matin, celle de l’après-midi, les visiteurs entre les deux.'},
+  long:'Celle qu’on installe quand la pause ne s’arrête jamais : l’équipe du matin, celle de l’après-midi, les visiteurs entre les deux. Assez d’autonomie pour tenir la journée sans qu’on repasse, et la même tasse à sept heures qu’à dix-sept.'},
  {slug:'snacks',code:'A3',nom:'Distributeur de snacks',img:'snack',acc:'Sucré, salé, confiseries. Les marques que vos équipes achètent déjà.',
-  long:'Pour les sites sans commerce à proximité, ou quand la coupure du midi est trop courte pour sortir.'},
+  long:'Pour les sites sans commerce à proximité, ou quand la coupure du midi est trop courte pour sortir. On la garnit avec les marques que vos équipes prennent déjà au supermarché — et on ajuste après quinze jours selon ce qui part.'},
  {slug:'boissons-fraiches',code:'B1',nom:'Boissons fraîches',img:'fraiches',acc:'Eau, sodas, jus. L’été dans un atelier, c’est ce qui compte le plus.',
-  long:'Eau plate et gazeuse, sodas, jus. Dans un atelier au mois de juillet, c’est la machine qui rend le plus service.'},
+  long:'Eau plate et gazeuse, sodas, jus, boissons énergétiques. Dans un atelier au mois de juillet, c’est la machine qui rend le plus service — et celle qu’on réapprovisionne le plus souvent.'},
  {slug:'fontaine-a-eau',code:'B2',nom:'Fontaine à eau',img:'fontaine',acc:'Bonbonne ou raccordée au réseau, selon ce que permet le local.',
-  long:'Deux montages possibles : la bonbonne, qui s’installe partout, ou le raccordement au réseau si l’arrivée d’eau est accessible.'},
+  long:'Deux montages possibles : la bonbonne, qui s’installe partout, ou le raccordement au réseau si l’arrivée d’eau est accessible. Dans les deux cas nous nous occupons des recharges, du filtre et de l’entretien sanitaire.'},
  {slug:'poste-complet',code:'B3',nom:'Le poste complet',img:'poste',star:true,acc:'Café, fraîches et snacks côte à côte. Un vrai coin pause, pas trois machines.',
-  long:'Café, boissons fraîches et snacks alignés, avec une seule monétique et un seul interlocuteur. C’est ce qui transforme un couloir en coin pause.'}
+  long:'Café, boissons fraîches et snacks alignés, avec une seule monétique et un seul interlocuteur. C’est ce qu’on installe le plus souvent, parce que c’est ce qui transforme un bout de couloir en vrai coin pause.'}
 ];
 const POINTS=[['La machine','Choisie selon votre effectif, pas selon un catalogue.'],
  ['La monnaie et le sans contact','Carte, téléphone, pièces.'],
  ['Le réapprovisionnement','Nous passons, vous ne commandez rien.'],
- ['Le dépannage','Sous 24 heures, par quelqu’un que vous connaissez.']];
+ ['Le dépannage','Une tournée passe à côté ou un technicien part du dépôt. Souvent dans la journée.']];
 const NOM=[['La machine','Inclus'],['La livraison et la mise en service','Inclus'],['Le nettoyage et l’hygiène','Inclus'],
- ['Le réapprovisionnement','Inclus'],['Le dépannage sous 24 h','Inclus'],['Une prise de courant et un peu de place','À prévoir'],
+ ['Le réapprovisionnement','Inclus'],['Le dépannage','Inclus'],['Une prise de courant et un peu de place','À prévoir'],
  ['La boisson, au moment de la prendre','Vos équipes']];
-const DEPTS=['Paris (75)','Seine-et-Marne (77)','Yvelines (78)','Essonne (91)','Hauts-de-Seine (92)','Seine-Saint-Denis (93)','Val-de-Marne (94)','Val-d’Oise (95)'];
+const DEPTS=['Paris (75)','Seine-et-Marne (77)','Yvelines (78)','Essonne (91)','Hauts-de-Seine (92)','Seine-Saint-Denis (93)','Val-de-Marne (94)','Val-d’Oise (95)','Nord du Loiret (45)'];
 const PRODUITS={
  A1:['Café en grains','Torréfaction française, moulu à la tasse'],A2:['Café soluble','Pour les gros débits et les secondes tasses'],
  A3:['Thé & infusions','Quatre parfums au choix'],A4:['Chocolat chaud','Le plus demandé l’hiver'],
@@ -297,7 +299,7 @@ const chips=l=>`<div class="chips">${l.map(t=>`<span class="chip"><i></i>${t}</s
 /* ---------------- gabarits ---------------- */
 function head(active){
   const nav=[['#/','Accueil'],['#/machines','Nos machines'],['#/depot-gratuit','Le dépôt gratuit'],['#/tournee','Nos tournées'],['#/contact','Contact']];
-  const sub=S.theme==='a'?`<div class="ref">EST. 1982 — TOUTE L’ÎLE-DE-FRANCE</div>`
+  const sub=S.theme==='a'?`<div class="ref">EST. 1982 — ÎLE-DE-FRANCE ET NORD DU LOIRET</div>`
     :S.theme==='b'?`<div class="lab" style="font-size:9.5px">Distribution automatique · depuis 1982</div>`:'';
   return `<header class="hd"><div><div class="mark">Jamet Distribution</div>${sub}</div>
     <nav>${nav.map(([h,t])=>`<a href="${h}" class="${h===active?'on':''}">${t}</a>`).join('')}</nav>
@@ -305,7 +307,8 @@ function head(active){
 }
 const foot=()=>`<footer class="foot"><div class="stack" style="gap:6px">
     <div class="mark" style="font-size:18px">Jamet Distribution</div>
-    <div style="font-size:14px;color:var(--ink2)">Chemin de la Gare, 77460 Chaintreaux · jametdistribution@orange.fr</div></div>
+    <div style="font-size:14px;color:var(--ink2)">Chemin de la Gare, 77460 Chaintreaux · jametdistribution@orange.fr · 01 64 29 55 71</div>
+    <div style="font-size:13px;color:var(--ink2)">SIREN 400 308 359 · Distribution automatique de boissons et de produits alimentaires</div></div>
     <div class="lab">Mentions légales · Confidentialité · Cookies</div></footer>`;
 const mcard=m=>`<a class="mcard" href="#/machines/${m.slug}"><div class="mimg"><img src="${IMG[m.img]}" alt="${esc(m.nom)}"></div>
   <div class="mtxt">${S.theme==='a'?`<span class="ref">${m.code}</span>`:(m.star?`<span class="lab" style="color:var(--acc)">Le plus demandé</span>`:'')}
@@ -313,7 +316,7 @@ const mcard=m=>`<a class="mcard" href="#/machines/${m.slug}"><div class="mimg"><
 const nomTable=()=>`<div class="tbl">${NOM.map(r=>`<div><span>${r[0]}</span><span class="lab" style="color:${r[1]==='Inclus'?'var(--acc)':'var(--ink2)'}">${r[1]}</span></div>`).join('')}</div>`;
 const ctaSec=()=>`<section class="sec"><div class="cols c21">
   <div class="stack"><div class="lab">Bon pour une visite</div><h2>On passe voir votre local.</h2>
-  <p class="lead">Trois questions, deux minutes. On vous rappelle sous 24 heures ouvrées, et vous n’êtes engagé à rien.</p>
+  <p class="lead">Quatre questions, deux minutes. On vous rappelle le lendemain au plus tard, et la visite ne vous engage à rien.</p>
   <div class="row"><a class="btn" href="#/devis">Demander une visite</a><span class="tel">01 64 29 55 71</span></div></div>
   <div class="imgbox" style="aspect-ratio:4/3"><img src="${IMG.situation}" alt="Un distributeur installé dans un espace de pause"></div></div></section>`;
 
@@ -359,7 +362,7 @@ const extractionMarkup=()=>`<div class="in">
     <div class="bl" id="b2"><div class="band ${'keyline'}" style="padding:20px 22px"><span style="font-family:var(--fd);font-weight:var(--fdw);font-size:clamp(22px,2.4vw,34px);text-transform:var(--fdtt)">Dépôt gratuit</span></div></div>
     <div class="bl" id="b3"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
       ${['A1 Petite café','A2 Grande café','B3 Poste complet'].map(t=>`<div style="border:1px solid var(--rule);padding:12px;min-height:80px;display:flex;align-items:flex-end;font-size:13px;font-family:var(--fd);font-weight:var(--fdw)">${t}</div>`).join('')}</div></div>
-    <div class="bl" id="b4"><div class="row"><a class="btn" href="#/devis">Demander une visite</a><span class="ref">Servi.</span></div></div>
+    <div class="bl" id="b4"><div class="row"><a class="btn" href="#/devis">Demander une visite</a><span class="ref">Prêt.</span></div></div>
   </div></div>`;
 
 const tourMarkup=(compact)=>`<div class="tour">
@@ -390,14 +393,14 @@ function home(){
     <div class="grid3" style="margin-top:10px">${MACHINES.map(mcard).join('')}</div></div></section>`;
   const nomSec=`<section class="sec"><div class="cols c21">
     <div class="stack"><div class="lab">En toute clarté</div><h2>Qui paie quoi.</h2>${nomTable()}</div>
-    <div class="stack"><div class="lab">Notre secteur</div><h2>Toute l’Île-de-France.</h2>
-      <p class="lead">Nous couvrons les huit départements depuis notre base de Chaintreaux. Et quel que soit le site, c’est la même personne qui revient d’une année sur l’autre.</p>
+    <div class="stack"><div class="lab">Notre secteur</div><h2>De Cergy à Montargis.</h2>
+      <p class="lead">Trois tournées quotidiennes au départ de Chaintreaux couvrent les huit départements franciliens et le nord du Loiret. Sur chaque site, c’est la même personne qui revient d’une année sur l’autre — elle sait déjà par où entrer le matin.</p>
       ${chips(DEPTS)}</div></div></section>`;
 
   if(S.theme==='a'){
     return `<section class="sec" style="border-top:0;padding-top:26px">
       <div class="band keyline"><div class="cols c21" style="gap:36px;align-items:center">
-        <div class="stack" style="gap:12px"><div class="lab" style="color:inherit;opacity:.8">Mise à disposition — toute l’Île-de-France</div>
+        <div class="stack" style="gap:12px"><div class="lab" style="color:inherit;opacity:.8">Mise à disposition — Île-de-France et nord du Loiret</div>
           <h1 style="font-size:clamp(30px,4.2vw,70px)">Dépôt<br>gratuit</h1></div>
         <div class="stack" style="gap:10px;font-size:17px"><div style="height:1px;background:currentColor;opacity:.5"></div>
           <div>La machine reste à nous. L’installation, l’entretien et le réapprovisionnement aussi.</div>
@@ -405,7 +408,7 @@ function home(){
       <div class="cols c21" style="margin-top:36px;align-items:center">
         <div class="stack"><div class="row" style="gap:12px"><span class="ref">PL. 01</span><span style="flex:1;height:1px;background:var(--rule)"></span></div>
           <h2>Ce qu’on installe, et ce que vous n’avez pas à faire.</h2>
-          <p class="lead">Quarante-quatre ans que nous posons des machines dans les ateliers et les bureaux d’Île-de-France. Le matériel ne vous appartient pas, donc il ne vous coûte pas.</p>
+          <p class="lead">Quarante-quatre ans que nous posons des machines dans les ateliers et les bureaux de la région. Le matériel ne vous appartient pas, donc il ne vous coûte pas.</p>
           <div class="tbl">${POINTS.map((p,i)=>`<div><span><b>${p[0]}</b> — ${p[1]}</span><span class="ref">0${i+1}</span></div>`).join('')}</div>
           <div class="row"><a class="btn" href="#/devis">Demander une visite</a><a class="btn2" href="#/machines">Voir les machines</a></div></div>
         <div class="imgbox" style="aspect-ratio:1"><img src="${IMG.duo}" alt="Un poste de pause complet installé en entreprise"></div></div></section>
@@ -418,22 +421,20 @@ function home(){
   if(S.theme==='b'){
     return `<section class="sec tall" id="extr" style="border-top:0"><div class="stick"><div class="wrap extr" data-mount="extraction"></div></div></section>
       <section class="sec"><div class="cols c21" style="align-items:center">
-        <div class="stack"><div class="lab">Île-de-France · entreprise familiale</div>
+        <div class="stack"><div class="lab">Île-de-France et nord du Loiret · entreprise familiale</div>
           <h1>Dépôt <span style="color:var(--acc);font-style:italic">gratuit.</span></h1>
           <p class="lead" style="font-size:21px">La machine reste à nous. L’installation, l’entretien et le réapprovisionnement aussi. Vos équipes paient leur boisson. C’est tout.</p>
           <div class="row"><a class="btn" href="#/devis">Demander une visite</a><a class="btn2" href="#/machines">Voir nos machines</a></div>
-          ${chips(['Dépôt gratuit','Installation offerte','Entretien inclus','Dépannage sous 24 h'])}</div>
+          ${chips(['Dépôt gratuit','Installation offerte','Entretien inclus','Dépannage le jour même'])}</div>
         <div class="imgbox" style="aspect-ratio:1"><img src="${IMG.duo}" alt="Un poste de pause complet installé en entreprise"></div></div></section>
+      <section class="sec"><div class="stack"><div class="lab">Ce matin même</div>
+        <h2>Trois tournées, deux techniciens.</h2>
+        <p class="lead">Voilà une matinée ordinaire chez nous. Deux clients appellent pour une panne, et aucune tournée ne prend de retard.</p>
+        <div data-mount="tour"></div></div></section>
       <section class="sec"><div class="cols c21"><div class="stack"><h2>Ce qu’on installe, et ce que vous n’avez pas à faire.</h2>
-        <p class="lead">Quarante-quatre ans que nous posons des machines dans les ateliers et les bureaux d’Île-de-France.</p></div>
+        <p class="lead">Quarante-quatre ans que nous posons des machines dans les ateliers et les bureaux de la région. Le matériel ne vous appartient pas, donc il ne vous coûte pas.</p></div>
         <div class="tbl">${POINTS.map((p,i)=>`<div><span><b>${p[0]}</b> — ${p[1]}</span><span class="lab" style="color:var(--acc)">${i+1}</span></div>`).join('')}</div></div></section>
-      ${machinesSec}
-      <section class="sec"><div class="cols c21" style="align-items:center">
-        <div class="stack"><div class="lab">Réactivité</div><h2>Douze minutes après votre appel, quelqu’un est chez vous.</h2>
-          <p class="lead">Trois tournées sillonnent la région chaque matin, et deux techniciens attendent au dépôt. Selon la panne, c’est l’un ou l’autre qui part.</p>
-          <div class="row"><a class="btn2" href="#/tournee">Voir une matinée en direct</a></div></div>
-        <div data-mount="tour-compact"></div></div></section>
-      ${nomSec}${ctaSec()}`;
+      ${machinesSec}${nomSec}${ctaSec()}`;
   }
   return `<section class="sec" style="border-top:0;padding-top:44px"><div class="cols c2" style="align-items:center">
       <div class="stack" style="gap:12px"><div class="imgbox" style="aspect-ratio:4/5"><img src="${IMG.duo}" alt="Trois collègues en pause devant le poste de café"></div>
@@ -455,7 +456,7 @@ function home(){
 
 function machinesPage(){return `<section class="sec" style="border-top:0;padding-top:44px"><div class="stack">
   <div class="lab">Nos machines</div><h1>Six façons de faire une pause.</h1>
-  <p class="lead">Pas de références ni de fiches techniques ici : on vient voir le local, et on vous dit laquelle vous ira.</p>
+  <p class="lead">Pas de références ni de fiches techniques ici : on vient voir le local, et on vous dit laquelle vous ira. La fiche détaillée s’envoie par courriel à qui la demande.</p>
   <div class="grid3" style="margin-top:14px">${MACHINES.map(mcard).join('')}</div></div></section>${ctaSec()}`;}
 
 function fiche(slug){
@@ -473,17 +474,19 @@ function fiche(slug){
         <div class="tbl"><div><span>Mise à disposition</span><span class="lab" style="color:var(--acc)">Gratuite</span></div>
           <div><span>Installation et réglages</span><span class="lab" style="color:var(--acc)">Inclus</span></div>
           <div><span>Entretien et réapprovisionnement</span><span class="lab" style="color:var(--acc)">Inclus</span></div>
-          <div><span>Engagement de durée</span><span class="lab">À confirmer</span></div></div>
-        <div class="row"><a class="btn" href="#/devis">Je veux celle-là</a><a class="btn2" href="#/contact">Recevoir la fiche</a></div></div></div></section>${ctaSec()}`;
+          <div><span>Ce qui reste à votre charge</span><span class="lab">L’électricité et un peu de place</span></div></div>
+        <div class="row"><a class="btn" href="#/devis">Je veux celle-là</a><a class="btn2" href="#/contact">Recevoir la fiche détaillée</a></div>
+        <span class="lab">Les conditions se règlent à la visite. Nous n’écrivons rien que nous ne puissions tenir.</span></div></div></section>${ctaSec()}`;
 }
 
 function depot(){return `<section class="sec" style="border-top:0;padding-top:44px"><div class="stack">
     <div class="lab">Le dépôt gratuit</div><h1>Vous n’avez rien à acheter, rien à gérer.</h1>
-    <p class="lead" style="font-size:21px">C’est notre métier depuis 1982 : la machine reste à nous, l’entretien aussi.</p></div></section>
+    <p class="lead" style="font-size:21px">C’est notre métier depuis 1982 : la machine reste à nous, l’entretien aussi. Vos équipes paient leur boisson au moment de la prendre, et c’est la seule dépense de l’histoire.</p>
+    <p class="lead">La contrepartie, nous la disons dès la visite : il faut assez de passage pour que la machine tourne. Si votre site est trop petit, nous vous le dirons plutôt que d’installer un appareil qui dormira.</p></div></section>
   <section class="sec"><div class="grid3" style="--gap:36px">
-    ${[['On vient voir','Un rendez-vous sur place : combien vous êtes, où se prend la pause, ce qui manque aujourd’hui.'],
+    ${[['On vient voir','Vingt minutes sur place : combien vous êtes, où se prend la pause, ce qui manque aujourd’hui.'],
        ['On installe','Livraison, branchement, réglages et première mise en service. Vous ne payez pas l’installation.'],
-       ['On revient','Réapprovisionnement, nettoyage, maintenance. Une panne ? On décroche et on passe.']]
+       ['On revient','Réapprovisionnement, nettoyage, entretien sanitaire. Une panne ? Vous appelez, on vous dit quand on arrive.']]
       .map((s,i)=>`<div class="stack" style="gap:10px;border-top:2px solid var(--ink);padding-top:14px">
         <span class="${S.theme==='a'?'ref':'lab'}" style="color:var(--acc)">0${i+1}</span><h3>${s[0]}</h3>
         <p style="font-size:16px;color:var(--ink2)">${s[1]}</p></div>`).join('')}</div></section>
@@ -529,7 +532,7 @@ function devis(){
                    v=>S.envies.includes(v),'envie')}
          <div class="row"><button class="btn2" data-act="step" data-v="2">Précédent</button><button class="btn" data-act="step" data-v="4">Continuer</button></div>`;
   }
-  else body=`<h1>Où est-ce qu’on vous rappelle ?</h1><p class="lead">Un appel sous 24 heures ouvrées, puis une visite si vous le souhaitez.</p>
+  else body=`<h1>Où est-ce qu’on vous rappelle ?</h1><p class="lead">On vous rappelle le lendemain au plus tard. Ensuite, une visite de vingt minutes sur place — et vous décidez.</p>
     <div class="fields">
       <label class="field"><span class="lab">Votre nom</span><input placeholder="Marie Duchesne"></label>
       <label class="field"><span class="lab">Votre société</span><input placeholder="Ateliers du Loing"></label>
@@ -545,11 +548,12 @@ function devis(){
 }
 function contact(){return `<section class="sec" style="border-top:0;padding-top:44px"><div class="cols c21" style="align-items:start">
   <div class="stack"><div class="lab">Contact</div><h1>On décroche.</h1>
-    <p class="lead" style="font-size:21px">Le plus simple reste le téléphone : c’est quelqu’un de l’équipe qui répond, pas un standard.</p>
+    <p class="lead" style="font-size:21px">Le plus simple reste le téléphone : c’est quelqu’un de l’équipe qui répond, pas un standard. Si nous sommes en tournée, laissez un message — nous rappelons le jour même.</p>
     <div class="tbl"><div><span>Téléphone</span><span class="tel">01 64 29 55 71</span></div>
       <div><span>Courriel</span><span>jametdistribution@orange.fr</span></div>
       <div><span>Adresse</span><span>Chemin de la Gare, 77460 Chaintreaux</span></div>
-      <div><span>Réponse aux courriels</span><span>Sous 24 à 48 heures</span></div></div>
+      <div><span>Réponse aux courriels</span><span>Sous 24 à 48 heures</span></div>
+      <div><span>Zone couverte</span><span>Île-de-France et nord du Loiret</span></div></div>
     <div class="row"><a class="btn" href="#/devis">Demander une visite</a></div></div>
   <div class="imgbox" style="aspect-ratio:1"><img src="${IMG.situation}" alt="Un distributeur installé dans un espace de pause"></div></div></section>`;}
 </script>
