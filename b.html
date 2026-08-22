@@ -105,6 +105,37 @@ p{margin:0;line-height:1.6}
 .tour{grid-template-columns:minmax(0,1fr) 330px}
 @media(min-width:980px){.tour{grid-template-columns:minmax(0,344px) minmax(0,1fr)}}
 .mapbox svg{width:100%;height:min(62vh,624px)}
+.tour.big{grid-template-columns:minmax(0,1fr);gap:20px}
+.tour.big .mapbox{padding-bottom:16px;display:flex;flex-direction:column}
+.tour.big .mapbox svg{width:auto;height:min(70vh,620px);max-width:100%;margin:0 auto;order:0}
+.tour.big .log{order:1}
+.tour.big .side{order:2}
+.tour.big .log{margin:14px 16px 0}
+.tour.big .side{margin:14px 16px 0}
+.mcap{position:absolute;right:16px;top:14px}
+.tour.big .log{min-height:0}
+.tour.big .log h4{padding:11px 14px}
+.tour.big .log ul{max-height:none}
+.tour.big .log li{font-size:12.8px;grid-template-columns:40px 1fr;gap:8px;padding:7px 14px;line-height:1.42}
+.tour.big .log li time{font-size:10.5px}
+.side{display:flex;flex-direction:column;gap:13px}
+.side .legend{border:1px solid var(--rule);background:var(--panel)}
+.side .metric{border:1px solid var(--rule);background:var(--panel);padding:12px 14px}
+.inset{border:1px solid var(--rule);background:var(--panel);padding:11px 12px 8px}
+.inset .lab{font-size:10px;margin-bottom:6px}
+.inset .dep{stroke-width:.9}
+.side .trow{margin:0}
+.side .trow .btn2{width:100%;justify-content:center;text-align:center}
+@media(min-width:1100px){
+  .tour.big{grid-template-columns:minmax(0,1fr)}
+  .tour.big .mapbox{padding-bottom:0;display:block}
+  .tour.big .mapbox svg{height:min(82vh,840px);margin:0 auto}
+  .tour.big .side{position:absolute;left:20px;top:20px;width:246px;margin:0;z-index:2}
+  .tour.big .log{position:absolute;right:20px;top:20px;width:298px;margin:0;height:auto;
+    max-height:calc(100% - 40px);z-index:2;box-shadow:0 2px 22px rgba(0,0,0,.07)}
+  .tour.big .side .legend,.tour.big .side .metric,.tour.big .side .inset{box-shadow:0 2px 22px rgba(0,0,0,.07)}
+  .tour.big .mcap{right:auto;left:20px;bottom:20px;top:auto}
+}
 @media(max-width:980px){.mapbox svg{height:min(52vh,440px)}}
 .dep{fill:var(--mapfill);stroke:var(--maprule);stroke-width:1.1;transition:fill .4s ease}
 .dep.hot{fill:color-mix(in srgb, var(--acc) 20%, var(--mapfill))}
@@ -233,6 +264,10 @@ p{margin:0;line-height:1.6}
   gap:2px;opacity:0;z-index:5;text-align:center;pointer-events:none}
 .islogan span{font-family:var(--fd);font-weight:var(--fdw);letter-spacing:var(--fdls);
   font-size:clamp(28px,5.6vw,84px);line-height:1.02;text-transform:var(--fdtt);text-wrap:balance}
+.iname{display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:38px;opacity:0;
+  font-family:var(--fd);font-weight:var(--fdw);font-size:clamp(15px,1.75vw,27px);letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink)}
+.iname i{display:block;height:1px;width:0;background:var(--ink2);opacity:.55}
 @media(max-width:760px){.imap,.icards,.iband{display:none}.imach{width:60%}}
 
 @media(max-width:760px){.wrap{padding:0 20px}.hd nav{display:none}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -367,20 +402,34 @@ const extractionMarkup=()=>`<div class="in">
     <div class="bl" id="b4"><div class="row"><a class="btn" href="#/devis">Demander une visite</a><span class="ref">Prêt.</span></div></div>
   </div></div>`;
 
-const tourMarkup=(compact)=>`<div class="tour">
-  <div class="mapbox"><svg id="map" viewBox="0 0 920 860" width="100%" style="display:block"></svg>
-    <div style="position:absolute;right:14px;top:12px" class="lab">Une matinée type</div></div>
-  <div class="log"><h4>Journal du matin</h4><ul id="logl"></ul>
-    <div class="legend" id="legend"></div>
-    <div style="border-top:1px solid var(--rule);padding:13px 16px">
-      <div class="lab">Interventions</div>
-      <div id="delay" style="font-family:var(--fd);font-weight:var(--fdw);font-size:26px;line-height:1.1">—</div></div></div>
-  </div>
-  <div class="row trow" style="margin-top:14px">${FINALB
-     ? `<button class="btn2" id="tplay">Revoir la matinée</button><button class="btn2" id="tpause" style="display:none"></button>
+const mapBox=()=>`<div class="mapbox"><svg id="map" viewBox="0 0 920 860" style="display:block"></svg>
+    <div style="position:absolute;right:14px;top:12px" class="lab">Une matinée type</div></div>`;
+const tourCtrl=()=>FINALB
+     ? `<button class="btn2" id="tplay">Revoir la matinée</button><button id="tpause" style="display:none"></button>
         <input id="tscrub" type="range" min="0" max="1000" value="0" style="display:none">`
      : `<button class="btn" id="tplay">Rejouer la matinée</button><button class="btn2" id="tpause">Pause</button>
-        <input id="tscrub" type="range" min="0" max="1000" value="0" style="flex:1;min-width:160px;accent-color:var(--acc)">`}</div>`;
+        <input id="tscrub" type="range" min="0" max="1000" value="0" style="flex:1;min-width:160px;accent-color:var(--acc)">`;
+const metricBox=()=>`<div class="lab">Interventions</div>
+      <div id="delay" style="font-family:var(--fd);font-weight:var(--fdw);font-size:24px;line-height:1.1">—</div>`;
+const tourMarkup=(compact)=>(FINALB&&!compact)
+ ? `<div class="tour big">
+     <div class="mapbox"><svg id="map" viewBox="0 0 920 860" style="display:block"></svg>
+       <div class="mcap lab">Une matinée type</div>
+       <div class="side">
+         <div class="legend" id="legend"></div>
+         <div class="metric">${metricBox()}</div>
+         <div class="row trow">${tourCtrl()}</div>
+         <div class="inset"><div class="lab">Zoom · Paris et proche banlieue</div>
+           <svg id="map2" viewBox="312 196 176 152" style="display:block;width:100%;aspect-ratio:176/152;height:auto"></svg></div></div>
+       <div class="log"><h4>Journal du matin</h4><ul id="logl"></ul></div></div>
+   </div>`
+ : `<div class="tour">
+  ${mapBox()}
+  <div class="log"><h4>Journal du matin</h4><ul id="logl"></ul>
+    <div class="legend" id="legend"></div>
+    <div style="border-top:1px solid var(--rule);padding:13px 16px">${metricBox()}</div></div>
+  </div>
+  <div class="row trow" style="margin-top:14px">${tourCtrl()}</div>`;
 
 const cfgMarkup=()=>`<div class="cfg">
   <div class="plate" style="padding:18px"><svg id="vend" viewBox="0 0 620 520" width="100%" style="display:block"></svg></div>
@@ -664,7 +713,32 @@ function mountTour(host, compact){
   const dots=TOURS.map(t=>dot(t.col,t.n));
   const techs=[dot(TECH_COL,'T1'),dot(TECH_COL,'T2')];
 
-  const ul=host.querySelector('#logl');
+  /* ---- encart zoom Paris ---- */
+  let insDot=null, insInc=null;
+  const ins=host.querySelector('#map2');
+  if(ins){
+    const IN=['Nanterre','Paris','Bobigny','Rungis'];
+    for(const code of ['75','92','93','94'])
+      if(IDF.deps[code]) ins.appendChild(svgEl('path',{d:IDF.deps[code].d,class:'dep'}));
+    const r1=buildRoute(TOURS[0].pts);
+    ins.appendChild(svgEl('path',{d:'M'+r1.pts.map(p=>p.join(',')).join(' L'),fill:'none',
+      stroke:TOURS[0].col,'stroke-width':1.7,'stroke-dasharray':'5 4',opacity:'.8'}));
+    const IL={'Nanterre':[0,-7,'middle'],'Paris':[7,-2,'start'],'Bobigny':[7,3,'start'],'Rungis':[7,3,'start']};
+    IN.forEach(n=>{const [x,y]=V[n]; const [dx,dy,an]=IL[n];
+      ins.appendChild(svgEl('rect',{x:x-2.6,y:y-2.6,width:5.2,height:5.2,fill:TOURS[0].col}));
+      const l=ins.appendChild(svgEl('text',{x:x+dx,y:y+dy,'text-anchor':an,'font-family':'Archivo','font-size':9,fill:'var(--ink)'}));
+      l.textContent=n;});
+    const [px,py]=V[P1];
+    const ih=ins.appendChild(svgEl('circle',{cx:px,cy:py,r:6,fill:'none',stroke:TECH_COL,'stroke-width':1.4,opacity:0}));
+    const im=ins.appendChild(svgEl('circle',{cx:px,cy:py,r:3.2,fill:TECH_COL,opacity:0}));
+    const it=ins.appendChild(svgEl('text',{x:px-5,y:py+3,'text-anchor':'end','font-family':'Archivo','font-size':9,
+      fill:TECH_COL,'font-weight':600,opacity:0})); it.textContent='Panne';
+    insInc={halo:ih,mark:im,txt:it};
+    insDot=svgEl('g',{}); insDot.appendChild(svgEl('circle',{r:6.5,fill:TOURS[0].col,stroke:'var(--panel)','stroke-width':1.2}));
+    const dt=svgEl('text',{'text-anchor':'middle',y:2.4,'font-family':'Syne Mono','font-size':7,fill:'#FFF'});
+    dt.textContent='1'; insDot.appendChild(dt); ins.appendChild(insDot);
+  }
+  const ul=host.querySelector('#logl'); let lastOn=-1;
   EVENTS.forEach(e=>{const li=document.createElement('li'); if(e[3]) li.className='alert';
     li.innerHTML=`<time>${e[1]}</time><span>${e[2]}</span>`; ul.appendChild(li);});
   const lis=[...ul.children];
@@ -684,6 +758,7 @@ function mountTour(host, compact){
     else if(t<A1){const k=(t-C1)/(A1-C1); p1=[lerp(pos1[0],cre[0],k),lerp(pos1[1],cre[1],k)];}
     else {const k=clamp((t-A1)/(1-A1),0,1); p1=atRoute(R[0], lerp(cut1,1,k));}
     dots[0].setAttribute('transform',`translate(${p1[0]},${p1[1]})`);
+    if(insDot) insDot.setAttribute('transform',`translate(${p1[0]},${p1[1]})`);
     dots[1].setAttribute('transform',`translate(...)`.replace('...',atRoute(R[1],t).join(',')));
     dots[2].setAttribute('transform',`translate(...)`.replace('...',atRoute(R[2],t).join(',')));
     // techniciens
@@ -704,8 +779,14 @@ function mountTour(host, compact){
       inc[i].mark.setAttribute('opacity',sh?1:0); inc[i].txt.setAttribute('opacity',sh?1:0);
       inc[i].halo.setAttribute('opacity',sh&&live?1:0);
       inc[i].halo.classList.toggle('pulse',sh&&live&&!reduce);});
+    if(insInc){ insInc.mark.setAttribute('opacity',on1?1:0); insInc.txt.setAttribute('opacity',on1?1:0);
+      insInc.halo.setAttribute('opacity',on1&&t<A1?1:0);
+      insInc.halo.classList.toggle('pulse',on1&&t<A1&&!reduce); }
     if(!FINALB) host.querySelectorAll('.dep').forEach(d=>d.classList.toggle('hot',on2&&d.dataset.code==='77'));
-    EVENTS.forEach((e,i)=>lis[i].classList.toggle('on',t>=e[0]));
+    let ai=-1; EVENTS.forEach((e,i)=>{lis[i].classList.toggle('on',t>=e[0]); if(t>=e[0]) ai=i;});
+    if(ai!==lastOn){ lastOn=ai;
+      const li=lis[ai]; if(li&&ul.scrollHeight>ul.clientHeight+4)
+        ul.scrollTop=Math.max(0,li.offsetTop-ul.clientHeight*0.55); }
     const u='<span style="font-size:14px;font-family:var(--fb);font-weight:400;color:var(--ink2)">';
     if(t>=A2) delay.innerHTML='11 et 16 min'+u+' deux pannes réglées ce matin</span>';
     else if(t>=C2) delay.innerHTML=Math.round(2+(t-C2)/(A2-C2)*14)+' min'+u+' 2<sup>e</sup> panne — technicien en route</span>';
@@ -755,7 +836,8 @@ function playIntro(done){
          <path class="wisp" style="animation-delay:.8s" d="M150 260 c-8 -10 8 -16 0 -26"/>
          <path class="wisp" style="animation-delay:1.6s" d="M168 264 c-7 -9 7 -14 0 -23"/></g>
      </svg></div>
-     <div class="islogan" id="islogan"><span>${sl[0]}</span><span>${sl[1]}</span></div>
+     <div class="islogan" id="islogan"><span>${sl[0]}</span><span>${sl[1]}</span>
+       <div class="iname" id="iname"><i></i>Jamet Distribution</div></div>
    </div>`;
   document.body.appendChild(ov);
   const g=ov.querySelector('#imapg'), tg=ov.querySelector('#itours');
@@ -774,7 +856,8 @@ function playIntro(done){
         steam=ov.querySelector('#isteam'), slog=ov.querySelector('#islogan');
   const imap=ov.querySelector('.imap'), iband=ov.querySelector('.iband'),
         icards=[...ov.querySelectorAll('.icard')], imach=ov.querySelector('.imach');
-  const D=reduce?300:7000; let t0=null, ended=false;
+  const iname=ov.querySelector('#iname');
+  const D=reduce?300:7800; let t0=null, ended=false;
   function end(){ if(ended) return; ended=true; ov.classList.add('out');
     setTimeout(()=>{ov.remove(); done&&done();},650); }
   ov.querySelector('#skip').addEventListener('click',end);
@@ -797,9 +880,12 @@ function playIntro(done){
     tps.forEach((o,i)=>{const kk=clamp((rp-i*0.12)/0.7,0,1); o.p.setAttribute('stroke-dashoffset',o.L*(1-kk));});
     const bp=clamp((k-0.58)/0.14,0,1);
     iband.style.opacity=bp; iband.style.transform=`translateY(${(1-bp)*18}px)`;
-    const sp=clamp((k-0.74)/0.16,0,1);
+    const sp=clamp((k-0.68)/0.14,0,1);
     if(sp>0){ ov.querySelector('.istage').classList.add('dim');
       slog.style.opacity=sp; slog.style.transform=`translateY(${(1-sp)*24}px)`; }
+    const np=clamp((k-0.85)/0.10,0,1);
+    iname.style.opacity=np; iname.style.transform=`translateY(${(1-np)*14}px)`;
+    iname.querySelector('i').style.width=(np*70)+'px';
     if(k<1) requestAnimationFrame(step); else setTimeout(end,600);
   }
   requestAnimationFrame(step);
