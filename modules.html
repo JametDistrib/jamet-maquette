@@ -1,0 +1,603 @@
+<title>Bancs d'essai Jamet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Syne:wght@600;700;800&family=Syne+Mono&display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--ground);color:var(--ink);font-family:'Archivo',Arial,sans-serif;font-size:16px;line-height:1.55}
+:root, [data-mode="jour"]{
+  --ground:#E3E2DA;--panel:#EFEEE7;--sunk:#D6D5CC;--ink:#16181A;--ink2:#5A5F62;--rule:#B9B8AE;
+  --brand:#123E7C;--brandfg:#F2F1EA;--acc:#B5321F;--accfg:#FFF;--glass:#C9D2DA;--metal:#2A2E31;--spiral:#6E7780;--shelf:#8A9099;--mapfill:#D6D5CC;--maprule:#A9A89E;
+}
+[data-mode="nuit"]{
+  --ground:#0F1214;--panel:#171B1E;--sunk:#0A0D0F;--ink:#E7E5DC;--ink2:#9AA0A3;--rule:#2E3438;
+  --brand:#12294B;--brandfg:#E7E5DC;--acc:#E0705A;--accfg:#0F1214;--glass:#1B2429;--metal:#12161A;--spiral:#7E8A92;--shelf:#39434A;--mapfill:#1F262B;--maprule:#46515A;
+}
+a{color:var(--acc);text-decoration:none}
+.h{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1;text-transform:uppercase;margin:0}
+.tag{font-family:'Syne',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--ink2)}
+.ref{font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--acc)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 40px}
+.lead{font-size:18px;color:var(--ink2);max-width:60ch}
+
+/* barre de test neutre */
+.testbar{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:9px 18px;background:#101113;color:#C8CCD0;font-size:12px;letter-spacing:.04em;border-bottom:1px solid #26292D}
+.testbar b{color:#fff;font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:10.5px}
+.tb{display:flex;border:1px solid #33373C;border-radius:2px;overflow:hidden}
+.tb button,.tb a{background:none;border:0;border-right:1px solid #33373C;color:#C8CCD0;font:inherit;padding:6px 13px;cursor:pointer;text-decoration:none}
+.tb button:last-child,.tb a:last-child{border-right:0}
+.tb button[aria-pressed="true"]{background:#E9EDF1;color:#101113;font-weight:600}
+.tb .note{color:#7C838B;margin-left:auto}
+main{padding-top:38px}
+
+.intro{padding:56px 0 44px;border-bottom:1px solid var(--rule)}
+.mod{border-bottom:1px solid var(--rule);padding:56px 0}
+.modhead{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;margin-bottom:12px}
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0;border:1px solid var(--rule);margin-top:26px}
+.verdict div{padding:18px 20px;border-right:1px solid var(--rule)}
+.verdict div:last-child{border-right:0}
+.verdict p{margin:6px 0 0;font-size:14.5px;color:var(--ink2)}
+.ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.btn{background:var(--acc);color:var(--accfg);border:0;padding:12px 20px;cursor:pointer;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.btn2{background:none;color:var(--ink);border:1px solid var(--ink);padding:11px 19px;cursor:pointer;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.btn2[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+
+/* ---- M1 ---- */
+#m1{height:340vh;position:relative;border-bottom:1px solid var(--rule)}
+#m1 .sticky{position:sticky;top:38px;height:calc(100vh - 38px);display:flex;align-items:center;overflow:hidden}
+.m1grid{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:48px;align-items:center;width:100%}
+@media(max-width:880px){.m1grid{grid-template-columns:1fr;gap:20px}}
+.build{display:flex;flex-direction:column;gap:14px}
+.bl{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.3,1)}
+.bl.on{opacity:1;transform:none}
+.skelbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule);padding-bottom:10px}
+.skelcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.skelcard{border:1px solid var(--rule);padding:14px;min-height:96px;display:flex;flex-direction:column;justify-content:space-between}
+.prog{height:2px;background:var(--rule);position:relative}
+.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--acc);width:0}
+.steam{opacity:0;transition:opacity .6s ease}
+.steam.on{opacity:1}
+.wisp{animation:rise 3.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes rise{
+  0%{opacity:0;transform:translateY(8px) scaleY(.55)}
+  22%{opacity:.85}
+  100%{opacity:0;transform:translateY(-56px) scaleY(1.2)}
+}
+
+/* ---- M2 ---- */
+.m2{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;align-items:start;margin-top:26px}
+@media(max-width:960px){.m2{grid-template-columns:1fr}}
+.mapbox{border:1px solid var(--rule);background:var(--panel);position:relative}
+.dep{fill:var(--mapfill);stroke:var(--maprule);stroke-width:1.2;transition:fill .4s ease}
+.dep.hot{fill:color-mix(in srgb, var(--acc) 20%, var(--mapfill))}
+.log{border:1px solid var(--rule);background:var(--panel);height:100%;display:flex;flex-direction:column}
+.log h4{margin:0;padding:14px 16px;border-bottom:1px solid var(--rule);font-family:'Syne',sans-serif;
+  font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.log ul{list-style:none;margin:0;padding:8px 0;overflow:auto;flex:1}
+.log li{display:grid;grid-template-columns:52px 1fr;gap:10px;padding:9px 16px;font-size:14px;
+  opacity:0;transform:translateX(-6px);transition:opacity .35s ease,transform .35s ease}
+.log li.on{opacity:1;transform:none}
+.log li time{font-family:'Syne Mono',monospace;font-size:11.5px;color:var(--ink2);padding-top:3px}
+.log li.alert{background:color-mix(in srgb, var(--acc) 12%, transparent)}
+.log li.alert b{color:var(--acc)}
+.pulse{animation:pulse 1.4s ease-out infinite}
+@keyframes pulse{0%{r:6;opacity:.9}100%{r:26;opacity:0}}
+
+/* ---- M3 ---- */
+.m3{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:32px;align-items:start;margin-top:26px}
+@media(max-width:960px){.m3{grid-template-columns:1fr}}
+.keypad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--rule)}
+.keypad button{background:var(--panel);border:0;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  padding:13px 6px;cursor:pointer;color:var(--ink);font-family:'Syne Mono',monospace;font-size:13px}
+.keypad button:hover{background:var(--acc);color:var(--accfg)}
+.keypad button[aria-pressed="true"]{background:var(--brand);color:var(--brandfg)}
+.slot{border:1px solid var(--rule);background:var(--panel);padding:20px;min-height:190px;display:flex;flex-direction:column;gap:10px}
+.slot .empty{color:var(--ink2);font-size:14.5px}
+.deliver{animation:pop .5s cubic-bezier(.2,.8,.3,1)}
+@keyframes pop{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion: reduce){
+  .wisp,.pulse{animation:none}
+  .bl{transition:none;opacity:1;transform:none}
+}
+</style>
+
+<div class="testbar">
+  <b>Bancs d'essai</b>
+  <span class="tb">
+    <a href="#m1">1 · Extraction</a><a href="#m2">2 · Tournée</a><a href="#m3">3 · Distributeur</a>
+  </span>
+  <span class="tb" id="tbmode"><button data-m="jour">Jour</button><button data-m="nuit">Nuit</button></span>
+  <span class="note">Trois modules à tester séparément — visuels et données de démonstration.</span>
+</div>
+
+<main data-mode="jour" id="root">
+
+  <div class="wrap intro">
+    <div class="modhead"><span class="ref">BANC D'ESSAI</span><span class="tag">Jamet Distribution</span></div>
+    <h1 class="h" style="font-size:clamp(30px,3.6vw,52px)">Trois modules,<br>trois paris différents.</h1>
+    <p class="lead" style="margin-top:18px">
+      Chacun se teste seul. Le premier et le deuxième peuvent cohabiter sur le même site&nbsp;;
+      le troisième remplace la page d'accueil et ne se marie avec aucun des deux.
+      Les chiffres, les noms de clients et les horaires sont fictifs.
+    </p>
+  </div>
+
+  <!-- ================= MODULE 1 ================= -->
+  <section id="m1">
+    <div class="sticky"><div class="wrap"><div class="m1grid">
+
+      <div>
+        <svg id="mach" viewBox="0 0 440 560" width="100%" style="display:block;max-height:calc(100vh - 200px)">
+          <defs>
+            <clipPath id="cupclip"><path d="M176 372 h88 l-10 62 h-68 z"/></clipPath>
+            <linearGradient id="jet" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6B4A2A" stop-opacity=".95"/>
+              <stop offset="100%" stop-color="#3A2716" stop-opacity=".95"/>
+            </linearGradient>
+            <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+          </defs>
+
+          <!-- fond quadrillé -->
+          <g stroke="var(--rule)" stroke-width="1" opacity=".3">
+            <path d="M0 40H440M0 80H440M0 120H440M0 160H440M0 200H440M0 240H440M0 280H440M0 320H440M0 360H440M0 400H440M0 440H440M0 480H440M0 520H440"/>
+            <path d="M40 0V560M80 0V560M120 0V560M160 0V560M200 0V560M240 0V560M280 0V560M320 0V560M360 0V560M400 0V560"/>
+          </g>
+
+          <!-- trémie -->
+          <path d="M150 26 h140 l-16 52 h-108 z" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.8"/>
+          <g id="beans"></g>
+
+          <!-- corps -->
+          <rect x="118" y="78" width="204" height="366" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.8"/>
+          <rect x="140" y="98" width="160" height="104" fill="var(--sunk)" stroke="var(--ink)" stroke-width="1.4"/>
+          <g id="screen" opacity="0">
+            <rect x="146" y="104" width="148" height="92" fill="var(--acc)" opacity=".85"/>
+            <rect x="158" y="118" width="60" height="8" fill="var(--accfg)" opacity=".8"/>
+            <rect x="158" y="134" width="112" height="6" fill="var(--accfg)" opacity=".5"/>
+            <rect x="158" y="148" width="86" height="6" fill="var(--accfg)" opacity=".5"/>
+          </g>
+
+          <!-- moulin -->
+          <g id="grinder">
+            <circle cx="220" cy="246" r="30" fill="var(--sunk)" stroke="var(--ink)" stroke-width="2"/>
+            <path d="M220 216 L220 276 M190 246 L250 246 M199 225 L241 267 M241 225 L199 267" stroke="var(--ink)" stroke-width="1.8"/><circle cx="220" cy="246" r="6" fill="var(--ink)"/>
+          </g>
+          <text x="256" y="250" class="ref" fill="var(--ink2)" font-family="Syne Mono" font-size="10">MOUTURE</text>
+
+          <!-- bec + jet -->
+          <rect x="204" y="286" width="32" height="18" fill="var(--metal)"/>
+          <rect id="jetrect" x="216" y="304" width="8" height="0" fill="url(#jet)"/>
+
+          <!-- tasse -->
+          <path d="M176 372 h88 l-10 62 h-68 z" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.8"/>
+          <path d="M264 386 q26 6 20 26 q-5 16 -24 16" fill="none" stroke="var(--ink)" stroke-width="1.8"/>
+          <g clip-path="url(#cupclip)">
+            <rect id="fill" x="170" y="434" width="100" height="0" fill="#4A3220"/>
+            <rect id="crema" x="170" y="434" width="100" height="0" fill="#C69455"/>
+          </g>
+          <path d="M150 446 h140" stroke="var(--ink)" stroke-width="2"/>
+
+          <!-- vapeur -->
+          <g id="steam" class="steam" fill="none" stroke="var(--ink2)" stroke-width="2.6" stroke-linecap="round">
+            <path class="wisp" style="animation-delay:0s" d="M198 360 c-9 -12 9 -19 0 -31 c-8 -11 7 -17 0 -27"/>
+            <path class="wisp" style="animation-delay:.85s" d="M220 356 c-10 -13 10 -21 0 -34 c-9 -12 8 -18 0 -30"/>
+            <path class="wisp" style="animation-delay:1.7s" d="M242 360 c-9 -12 9 -19 0 -31 c-8 -11 7 -17 0 -27"/>
+          </g>
+
+          <text x="20" y="540" font-family="Syne Mono" font-size="11" fill="var(--ink2)">PL. 30 — EXTRACTION</text>
+          <text id="pct" x="420" y="540" text-anchor="end" font-family="Syne Mono" font-size="11" fill="var(--acc)">0 %</text>
+        </svg>
+      </div>
+
+      <div class="build">
+        <div class="modhead" style="margin:0"><span class="ref">MODULE 1</span><span class="tag">Le site se construit pendant l'extraction</span></div>
+        <h2 class="h" style="font-size:clamp(24px,2.6vw,36px)">La page se remplit<br>comme la tasse.</h2>
+        <p style="font-size:15.5px;color:var(--ink2);margin:0">Faites défiler. Chaque étape de l'extraction fait apparaître un morceau du site.</p>
+
+        <div class="ctrl" style="margin:6px 0 2px"><button class="btn2" id="m1auto">Voir en animation d'arrivée</button><span class="ref" id="m1state">Pilotée au défilement</span></div><div class="prog" style="margin:4px 0"><i id="pbar"></i></div>
+
+        <div class="bl" id="b1">
+          <div class="skelbar"><span class="h" style="font-size:15px">JAMET DISTRIBUTION</span><span class="ref">01 64 29 55 71</span></div>
+        </div>
+        <div class="bl" id="b2">
+          <div style="background:var(--brand);color:var(--brandfg);padding:18px 20px;position:relative">
+            <div style="position:absolute;inset:6px;border:1.5px solid var(--brandfg);opacity:.5"></div>
+            <span class="h" style="font-size:clamp(22px,2.4vw,34px)">Dépôt gratuit</span>
+          </div>
+        </div>
+        <div class="bl" id="b3">
+          <div class="skelcards">
+            <div class="skelcard"><span class="ref">A1</span><b style="font-family:'Syne',sans-serif;font-size:13px">Petite café</b></div>
+            <div class="skelcard"><span class="ref">A2</span><b style="font-family:'Syne',sans-serif;font-size:13px">Grande café</b></div>
+            <div class="skelcard"><span class="ref">B3</span><b style="font-family:'Syne',sans-serif;font-size:13px">Poste complet</b></div>
+          </div>
+        </div>
+        <div class="bl" id="b4">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <span class="btn">Demander une visite</span>
+            <span style="font-family:'Syne Mono',monospace;font-size:15px">Servi en 22 secondes.</span>
+          </div>
+        </div>
+      </div>
+
+    </div></div></div>
+  </section>
+
+  <div class="wrap" style="padding:34px 40px 46px;border-bottom:1px solid var(--rule)">
+    <div class="verdict">
+      <div><span class="tag">Ce que ça apporte</span><p>Le seul module qui fait ressentir le produit. Il occupe l'attente de chargement au lieu de la subir.</p></div>
+      <div><span class="tag">Ce que ça coûte</span><p>Environ 25 Ko de dessin et de code. Aucune image, aucune vidéo. Se coupe seul si le visiteur a réduit les animations.</p></div>
+      <div><span class="tag">Le risque</span><p>Un visiteur pressé veut le numéro de téléphone, pas un spectacle. L'en-tête et l'appel à l'action restent donc visibles dès la première seconde.</p></div>
+    </div>
+  </div>
+
+  <!-- ================= MODULE 2 ================= -->
+  <section class="mod" id="m2"><div class="wrap">
+    <div class="modhead"><span class="ref">MODULE 2</span><span class="tag">La tournée en direct</span></div>
+    <h2 class="h" style="font-size:clamp(24px,2.8vw,40px)">Un client tombe en panne.<br>Regardez ce qui se passe.</h2>
+    <p class="lead" style="margin-top:14px">
+      Une tournée d'approvisionnement en cours sur les huit départements. À 9&nbsp;h&nbsp;41, un client appelle&nbsp;:
+      sa machine est en panne. La tournée se déroute sous vos yeux.
+    </p>
+
+    <div class="m2">
+      <div class="mapbox">
+        <svg id="map" viewBox="0 0 920 760" width="100%" style="display:block"></svg>
+        <div style="position:absolute;left:14px;bottom:12px" class="ref">CARTE RÉELLE — TOURNÉE FICTIVE</div>
+      </div>
+      <div class="log">
+        <h4>Journal de tournée</h4>
+        <ul id="logl"></ul>
+        <div style="border-top:1px solid var(--rule);padding:14px 16px">
+          <div class="tag">Délai d'intervention</div>
+          <div id="delay" style="font-family:'Syne',sans-serif;font-weight:800;font-size:34px;line-height:1">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ctrl">
+      <button class="btn" id="m2play">Rejouer la journée</button>
+      <button class="btn2" id="m2pause" aria-pressed="false">Pause</button>
+      <input id="m2scrub" type="range" min="0" max="1000" value="0" style="flex:1;min-width:180px;accent-color:var(--acc)">
+    </div>
+
+    <div class="verdict">
+      <div><span class="tag">Ce que ça apporte</span><p>C'est votre promesse « dépannage sous 24 h » rendue visible. Aucun concurrent ne montre ça.</p></div>
+      <div><span class="tag">Ce que ça coûte</span><p>Environ 30 Ko. La carte est vectorielle, sans fond de plan tiers ni cookie Google.</p></div>
+      <div><span class="tag">Le risque</span><p>Ça reste une démonstration. Il faudra l'écrire honnêtement, ou la brancher un jour sur la vraie télémétrie.</p></div>
+    </div>
+  </div></section>
+
+  <!-- ================= MODULE 3 ================= -->
+  <section class="mod" id="m3"><div class="wrap">
+    <div class="modhead"><span class="ref">MODULE 3</span><span class="tag">Le site est un distributeur</span></div>
+    <h2 class="h" style="font-size:clamp(24px,2.8vw,40px)">Composez un code.<br>Le site vous le sert.</h2>
+    <p class="lead" style="margin-top:14px">
+      La navigation devient une façade vitrée. On tape un code, la spirale tourne, le produit tombe dans le bac —
+      et le bac délivre la page.
+    </p>
+
+    <div class="m3">
+      <div style="border:1px solid var(--rule);background:var(--panel);padding:20px">
+        <svg id="vend" viewBox="0 0 620 560" width="100%" style="display:block"></svg>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div class="tag" style="margin-bottom:8px">Clavier de sélection</div>
+          <div class="keypad" id="pad"></div>
+        </div>
+        <div class="slot" id="slot"><span class="empty">Bac de livraison — composez un code.</span></div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <div><span class="tag">Ce que ça apporte</span><p>Inoubliable, et parfaitement raccord avec votre métier. C'est le module dont on parle après.</p></div>
+      <div><span class="tag">Ce que ça coûte</span><p>Il remplace la page d'accueil et la navigation. Il exige une version classique en parallèle pour Google et pour les pressés.</p></div>
+      <div><span class="tag">Le risque</span><p>Un acheteur de collectivité peut le trouver peu sérieux. C'est le pari le plus fort et le plus clivant des trois.</p></div>
+    </div>
+  </div></section>
+
+  <div class="wrap" style="padding:44px 40px 70px">
+    <div class="tag">Recommandation</div>
+    <p style="font-size:19px;max-width:62ch;margin:10px 0 0">
+      Modules 1 et 2 ensemble&nbsp;: l'extraction en arrivée sur le site, la tournée en preuve de réactivité plus bas.
+      Le module 3 se teste seul, contre les deux autres — pas à côté.
+    </p>
+  </div>
+</main>
+
+<script>
+const IDF = {"deps":{"93":{"nom":"Seine-Saint-Denis","d":"M481.6,168.8 L487.0,167.2 L493.1,180.4 L492.9,184.6 L486.0,189.2 L496.8,204.4 L502.4,219.9 L497.4,223.7 L497.7,234.2 L494.5,241.4 L485.7,245.6 L484.3,247.8 L488.8,253.5 L487.9,260.1 L496.0,260.7 L494.3,265.7 L490.4,268.1 L498.2,285.6 L499.8,295.1 L498.1,297.3 L490.5,293.8 L489.2,287.6 L457.6,263.4 L451.7,263.0 L437.4,268.9 L424.3,270.8 L423.0,255.7 L417.0,246.7 L415.3,239.5 L411.2,237.2 L383.9,238.2 L381.3,229.6 L383.8,228.4 L390.8,218.0 L390.4,212.7 L386.8,209.7 L371.7,206.2 L370.6,201.5 L375.1,196.4 L378.1,198.8 L387.2,200.6 L398.0,196.7 L403.4,191.4 L411.0,193.4 L420.6,202.9 L428.9,200.9 L442.4,203.6 L445.7,197.7 L457.7,192.3 L459.6,189.2 L465.6,186.3 L472.9,171.7 L479.4,171.9 L481.6,168.8Z"},"75":{"nom":"Paris","d":"M383.9,238.2 L411.2,237.2 L415.3,239.5 L417.0,246.7 L423.0,255.7 L424.3,270.8 L422.6,280.1 L426.7,279.3 L429.3,275.7 L437.5,273.6 L444.1,275.3 L445.8,281.0 L443.8,289.9 L433.6,290.4 L420.0,284.5 L413.7,285.5 L402.3,291.7 L388.9,291.2 L366.8,281.4 L364.1,284.3 L356.7,279.9 L354.8,273.1 L343.8,268.0 L346.9,258.2 L358.1,251.0 L366.1,252.5 L372.0,245.2 L383.9,238.2Z"},"78":{"nom":"Yvelines","d":"M333.9,233.0 L323.8,238.3 L320.1,242.1 L313.8,255.5 L314.0,271.0 L310.9,279.1 L313.3,291.2 L317.1,293.7 L323.8,293.3 L326.8,303.8 L334.7,303.0 L338.4,309.6 L343.4,310.9 L344.7,317.2 L337.8,321.6 L329.9,317.8 L330.4,325.3 L326.1,329.0 L320.2,329.4 L317.0,332.5 L312.9,331.4 L307.8,336.2 L306.3,341.9 L296.7,340.4 L290.8,343.7 L296.4,350.1 L296.0,356.4 L290.4,363.8 L290.8,369.3 L285.7,370.3 L284.2,374.5 L268.9,373.4 L265.5,378.1 L261.6,392.7 L254.5,391.1 L255.2,398.7 L258.1,402.3 L264.8,402.4 L264.2,408.4 L269.0,414.6 L275.0,417.8 L272.7,423.5 L264.2,426.8 L264.9,434.9 L257.0,448.4 L257.1,456.0 L242.1,457.2 L223.7,452.6 L222.1,462.0 L236.1,471.5 L230.2,477.4 L223.3,492.0 L221.8,503.9 L214.1,509.1 L217.1,519.4 L216.5,525.7 L210.6,527.0 L210.5,530.5 L198.4,530.2 L184.7,524.7 L181.1,513.8 L166.5,514.1 L164.4,502.6 L159.9,498.9 L162.0,494.2 L156.9,487.4 L155.7,474.9 L160.5,458.4 L152.2,454.8 L151.3,448.5 L143.2,444.2 L139.4,446.6 L127.8,443.0 L124.8,438.5 L131.4,424.7 L130.2,419.9 L119.5,421.7 L115.3,417.3 L109.8,420.3 L105.7,415.0 L106.4,411.5 L102.8,408.5 L103.7,404.8 L99.2,401.5 L100.1,396.5 L94.5,398.0 L88.6,395.5 L83.1,388.5 L87.0,372.2 L74.6,367.8 L73.5,364.4 L79.9,359.6 L77.6,357.6 L89.5,342.7 L93.1,335.0 L83.2,327.1 L75.7,325.3 L76.8,318.8 L73.8,316.3 L71.8,308.1 L75.1,297.5 L78.3,292.6 L75.2,281.6 L79.6,280.3 L80.0,276.8 L72.5,273.9 L74.3,267.1 L72.8,263.4 L68.0,260.0 L63.3,260.7 L59.5,256.0 L65.1,249.9 L64.1,243.9 L56.3,234.3 L57.6,228.7 L56.3,224.7 L50.2,222.8 L45.5,224.2 L43.9,215.3 L40.7,212.5 L38.7,194.5 L46.6,190.0 L43.4,185.3 L39.0,188.0 L30.5,188.5 L27.8,190.7 L23.7,183.6 L31.2,175.7 L28.4,163.3 L22.4,158.3 L22.5,152.9 L18.1,146.3 L18.0,141.0 L23.7,135.2 L33.8,142.3 L41.5,137.5 L45.0,127.9 L49.2,131.5 L60.8,128.9 L64.0,130.8 L71.4,125.2 L83.9,122.3 L88.0,129.7 L100.0,123.4 L112.9,125.4 L122.7,133.1 L121.8,139.3 L133.8,146.5 L138.9,144.1 L145.4,144.4 L145.0,140.7 L149.0,134.8 L156.6,139.1 L163.4,137.9 L165.8,134.0 L164.4,129.2 L175.9,126.5 L182.9,131.0 L183.4,134.0 L193.3,138.5 L187.7,152.7 L194.9,163.4 L200.2,162.6 L200.8,153.7 L211.4,144.5 L223.7,161.2 L230.9,159.4 L238.9,162.7 L246.3,161.7 L255.8,174.3 L260.1,175.8 L276.8,169.8 L281.4,173.6 L285.3,165.7 L296.0,169.5 L300.6,163.4 L303.0,168.9 L300.4,179.3 L303.0,181.9 L314.7,184.1 L322.4,190.5 L324.5,197.8 L322.5,204.8 L336.1,206.9 L336.1,212.8 L333.2,216.1 L335.2,229.4 L333.9,233.0Z"},"92":{"nom":"Hauts-de-Seine","d":"M371.7,206.2 L386.8,209.7 L390.4,212.7 L390.8,218.0 L383.8,228.4 L381.3,229.6 L383.9,238.2 L372.0,245.2 L366.1,252.5 L358.1,251.0 L346.9,258.2 L343.8,268.0 L354.8,273.1 L356.7,279.9 L364.1,284.3 L366.8,281.4 L388.9,291.2 L383.4,309.6 L386.4,313.5 L379.8,329.4 L384.2,334.6 L381.1,346.3 L377.1,346.8 L374.9,341.0 L367.3,344.6 L365.0,340.1 L369.4,335.4 L365.1,330.4 L358.5,326.8 L353.6,326.7 L347.4,323.5 L343.4,310.9 L338.4,309.6 L334.7,303.0 L326.8,303.8 L323.8,293.3 L317.1,293.7 L313.3,291.2 L310.9,279.1 L314.0,271.0 L313.8,255.5 L320.1,242.1 L323.8,238.3 L333.9,233.0 L362.4,208.9 L371.7,206.2Z"},"77":{"nom":"Seine-et-Marne","d":"M489.4,370.6 L490.9,365.3 L488.2,360.9 L495.1,348.2 L499.1,345.3 L495.4,339.2 L502.3,331.4 L500.6,327.1 L507.0,326.8 L504.3,318.3 L498.0,320.2 L495.3,315.6 L501.2,305.2 L497.9,303.2 L498.1,297.3 L499.8,295.1 L498.2,285.6 L490.4,268.1 L494.3,265.7 L496.0,260.7 L487.9,260.1 L488.8,253.5 L484.3,247.8 L485.7,245.6 L494.5,241.4 L497.7,234.2 L497.4,223.7 L502.4,219.9 L496.8,204.4 L486.0,189.2 L492.9,184.6 L493.1,180.4 L487.0,167.2 L481.6,168.8 L480.0,165.7 L475.2,164.5 L474.1,159.9 L479.4,160.1 L487.2,155.9 L490.2,147.6 L496.4,145.2 L494.9,141.6 L490.5,140.6 L489.4,137.0 L497.3,124.4 L504.3,118.5 L505.7,114.7 L509.9,114.6 L515.3,106.2 L529.7,116.3 L536.9,123.5 L540.0,129.2 L539.5,132.7 L545.8,133.6 L551.8,127.5 L556.8,130.7 L557.9,136.6 L568.6,135.0 L579.8,127.2 L581.8,117.7 L589.0,113.1 L593.5,119.5 L600.3,122.3 L604.1,121.3 L608.6,130.4 L625.0,126.1 L627.7,120.8 L634.4,124.3 L645.8,123.2 L656.7,118.5 L658.4,127.5 L664.0,129.1 L665.4,121.7 L672.6,116.9 L681.4,120.5 L682.8,118.5 L689.3,120.2 L693.1,115.3 L692.6,110.3 L699.2,100.4 L703.6,103.7 L738.3,111.7 L734.8,120.0 L735.5,123.9 L739.8,126.6 L745.3,135.6 L745.4,141.8 L748.8,145.5 L745.0,148.2 L743.1,155.8 L736.6,159.6 L741.0,166.1 L755.9,174.6 L756.8,179.0 L765.1,182.4 L766.0,189.8 L771.4,189.7 L774.6,192.6 L781.3,214.2 L788.3,212.8 L796.8,207.6 L800.2,217.2 L800.3,225.1 L807.5,233.0 L813.3,228.7 L817.3,228.8 L822.6,224.0 L825.1,224.8 L826.5,233.9 L823.8,242.4 L829.5,245.7 L828.6,254.5 L832.5,256.8 L839.2,253.8 L838.1,260.9 L845.5,261.4 L858.7,266.3 L855.8,274.6 L862.7,278.0 L866.3,269.6 L872.5,269.1 L874.3,276.7 L872.4,286.1 L873.3,292.4 L870.7,294.3 L866.3,288.8 L859.6,293.2 L850.2,294.2 L843.7,290.7 L838.5,296.1 L841.1,299.5 L854.1,301.4 L854.4,312.0 L848.6,315.0 L840.7,312.3 L836.2,330.2 L851.8,331.5 L853.8,340.9 L865.0,343.2 L863.7,360.8 L869.0,365.9 L864.4,374.3 L859.6,376.9 L854.7,383.0 L853.9,389.0 L862.1,395.4 L859.0,407.5 L868.9,405.3 L873.7,400.6 L880.0,400.0 L886.0,401.5 L886.7,407.8 L897.9,411.2 L902.0,416.1 L893.2,422.4 L880.3,426.0 L885.3,435.5 L877.6,435.4 L864.2,447.8 L867.1,451.3 L870.1,464.1 L861.6,473.0 L852.8,474.5 L846.6,471.2 L842.7,471.3 L839.0,474.7 L846.8,483.4 L851.3,498.7 L845.3,497.9 L831.9,505.0 L839.5,522.7 L838.2,531.4 L835.5,534.1 L833.4,540.6 L841.7,542.5 L842.5,546.9 L846.0,547.6 L843.0,562.2 L837.6,562.6 L829.8,556.2 L823.0,559.6 L821.1,567.1 L822.1,573.6 L807.4,573.7 L798.7,570.6 L797.0,573.2 L787.4,570.3 L780.1,572.1 L775.7,578.2 L766.7,574.9 L753.7,578.9 L746.6,576.3 L744.4,571.4 L739.4,573.9 L727.7,573.4 L718.6,577.1 L712.4,588.1 L705.9,582.2 L694.4,583.0 L689.8,581.3 L684.8,592.1 L684.4,603.0 L675.7,614.5 L680.5,619.3 L677.6,623.7 L681.5,628.5 L679.5,634.8 L687.3,637.3 L689.0,651.5 L682.2,652.0 L676.8,660.7 L671.2,678.2 L664.4,677.3 L658.3,679.5 L656.3,686.9 L648.4,689.2 L641.7,696.5 L642.3,706.3 L613.7,710.7 L609.9,716.5 L593.9,727.7 L585.6,725.4 L584.6,714.7 L589.3,707.6 L584.7,703.2 L576.9,703.6 L572.0,706.1 L562.6,706.0 L560.6,708.6 L565.7,712.7 L566.4,717.5 L555.5,721.7 L546.0,730.8 L527.9,732.4 L518.0,721.8 L502.4,726.5 L491.9,726.2 L489.0,720.6 L475.4,720.7 L468.4,729.2 L444.7,728.0 L438.9,731.6 L436.0,726.5 L441.0,723.8 L452.4,705.6 L462.0,710.7 L466.5,704.1 L463.5,697.1 L464.8,687.5 L469.0,682.7 L462.0,658.6 L453.8,657.6 L446.4,647.9 L438.5,651.2 L427.4,644.7 L424.9,633.2 L427.2,626.3 L426.2,620.0 L419.5,610.3 L414.6,596.5 L428.2,595.9 L432.3,585.5 L430.0,580.1 L439.0,571.9 L446.5,571.0 L452.3,565.8 L448.4,562.1 L452.1,558.8 L460.6,560.5 L468.5,552.9 L473.9,553.3 L473.5,548.9 L466.7,538.6 L462.6,537.3 L461.4,531.0 L460.2,502.2 L463.6,499.9 L465.8,489.7 L463.2,487.4 L459.2,476.5 L463.9,465.1 L459.8,463.2 L465.1,455.6 L468.5,446.0 L467.1,439.7 L473.4,435.9 L476.5,431.9 L477.7,426.6 L476.5,421.8 L470.2,420.7 L470.6,415.4 L467.0,411.8 L470.9,407.8 L477.2,406.5 L476.6,396.3 L473.5,392.6 L478.2,383.8 L495.2,378.6 L492.4,371.7 L489.4,370.6Z"},"94":{"nom":"Val-de-Marne","d":"M388.9,291.2 L402.3,291.7 L413.7,285.5 L420.0,284.5 L433.6,290.4 L443.8,289.9 L445.8,281.0 L444.1,275.3 L437.5,273.6 L429.3,275.7 L426.7,279.3 L422.6,280.1 L424.3,270.8 L437.4,268.9 L451.7,263.0 L457.6,263.4 L472.5,273.8 L489.2,287.6 L490.5,293.8 L498.1,297.3 L497.9,303.2 L501.2,305.2 L495.3,315.6 L498.0,320.2 L504.3,318.3 L507.0,326.8 L500.6,327.1 L502.3,331.4 L495.4,339.2 L499.1,345.3 L495.1,348.2 L488.2,360.9 L490.9,365.3 L489.4,370.6 L482.0,372.9 L476.8,365.4 L472.4,365.7 L471.7,361.2 L468.1,357.4 L466.0,347.1 L460.9,343.2 L450.5,348.0 L445.7,347.3 L440.5,351.1 L434.3,349.4 L423.4,354.1 L422.1,349.0 L411.9,352.8 L405.2,352.7 L404.6,336.3 L398.5,341.0 L384.2,334.6 L379.8,329.4 L386.4,313.5 L383.4,309.6 L388.9,291.2Z"},"91":{"nom":"Essonne","d":"M344.7,317.2 L347.4,323.5 L353.6,326.7 L358.5,326.8 L365.1,330.4 L369.4,335.4 L365.0,340.1 L367.3,344.6 L374.9,341.0 L377.1,346.8 L381.1,346.3 L384.2,334.6 L398.5,341.0 L404.6,336.3 L405.2,352.7 L411.9,352.8 L422.1,349.0 L423.4,354.1 L434.3,349.4 L440.5,351.1 L445.7,347.3 L450.5,348.0 L460.9,343.2 L466.0,347.1 L468.1,357.4 L471.7,361.2 L472.4,365.7 L476.8,365.4 L482.0,372.9 L489.4,370.6 L492.4,371.7 L495.2,378.6 L478.2,383.8 L473.5,392.6 L476.6,396.3 L477.2,406.5 L470.9,407.8 L467.0,411.8 L470.6,415.4 L470.2,420.7 L476.5,421.8 L477.7,426.6 L476.5,431.9 L473.4,435.9 L467.1,439.7 L468.5,446.0 L465.1,455.6 L459.8,463.2 L463.9,465.1 L459.2,476.5 L463.2,487.4 L465.8,489.7 L463.6,499.9 L460.2,502.2 L461.4,531.0 L462.6,537.3 L466.7,538.6 L473.5,548.9 L473.9,553.3 L468.5,552.9 L460.6,560.5 L452.1,558.8 L448.4,562.1 L452.3,565.8 L446.5,571.0 L439.0,571.9 L430.0,580.1 L432.3,585.5 L428.2,595.9 L414.6,596.5 L418.6,606.4 L416.1,610.2 L404.8,614.0 L392.4,606.7 L387.1,598.5 L380.8,600.0 L373.6,614.3 L361.7,610.2 L356.1,619.4 L352.5,620.5 L354.3,610.3 L349.6,609.1 L353.0,600.5 L346.0,601.0 L343.6,596.4 L334.5,591.2 L332.9,596.0 L327.3,602.7 L325.8,610.8 L320.6,611.5 L314.5,609.4 L315.0,616.7 L318.4,620.5 L296.1,621.5 L297.4,614.9 L294.3,614.7 L283.9,623.6 L271.8,622.4 L270.5,626.0 L252.8,629.2 L239.4,627.6 L232.7,614.0 L236.9,610.5 L239.1,604.8 L242.3,601.5 L239.2,597.1 L238.6,585.9 L244.2,580.1 L239.8,568.5 L235.7,567.7 L239.9,556.4 L233.8,553.3 L220.6,553.4 L218.7,547.9 L223.7,539.3 L225.8,529.9 L221.7,529.2 L220.6,522.1 L214.7,514.8 L214.1,509.1 L221.8,503.9 L223.3,492.0 L230.2,477.4 L236.1,471.5 L222.1,462.0 L223.7,452.6 L242.1,457.2 L257.1,456.0 L257.0,448.4 L264.9,434.9 L264.2,426.8 L272.7,423.5 L275.0,417.8 L269.0,414.6 L264.2,408.4 L264.8,402.4 L258.1,402.3 L255.2,398.7 L254.5,391.1 L261.6,392.7 L265.5,378.1 L268.9,373.4 L284.2,374.5 L285.7,370.3 L290.8,369.3 L290.4,363.8 L296.0,356.4 L296.4,350.1 L290.8,343.7 L296.7,340.4 L306.3,341.9 L307.8,336.2 L312.9,331.4 L317.0,332.5 L320.2,329.4 L326.1,329.0 L330.4,325.3 L329.9,317.8 L337.8,321.6 L344.7,317.2Z"},"95":{"nom":"Val-d'Oise","d":"M125.8,27.6 L136.4,29.5 L138.3,34.5 L138.1,41.1 L133.6,41.9 L130.5,46.0 L134.8,50.7 L139.7,51.5 L141.6,60.6 L147.1,64.2 L156.5,58.1 L162.1,60.8 L164.0,57.4 L171.9,63.2 L177.0,61.0 L181.4,66.0 L185.0,67.1 L198.2,66.2 L201.6,71.7 L221.0,64.4 L228.0,66.6 L233.3,64.8 L238.6,58.3 L248.4,63.0 L251.6,62.2 L258.9,55.2 L265.7,53.0 L283.7,41.8 L288.1,45.3 L290.4,54.5 L297.3,56.6 L305.4,53.5 L318.8,60.9 L315.9,65.4 L318.6,69.6 L326.0,64.7 L335.7,64.3 L341.4,60.3 L348.5,69.0 L340.5,77.0 L343.3,78.6 L355.6,77.9 L359.7,74.5 L362.8,75.8 L369.8,73.2 L370.8,66.6 L375.3,63.4 L376.0,58.3 L380.1,56.7 L394.9,72.3 L400.4,81.5 L405.3,73.9 L410.3,76.0 L413.8,80.2 L423.9,78.7 L434.6,82.4 L432.3,90.0 L443.3,88.7 L459.1,97.4 L460.3,99.5 L455.2,107.5 L472.4,111.8 L473.2,99.3 L476.5,97.4 L482.9,99.7 L481.2,102.7 L483.8,112.6 L492.4,116.6 L494.3,123.8 L497.3,124.4 L489.4,137.0 L490.5,140.6 L494.9,141.6 L496.4,145.2 L490.2,147.6 L487.2,155.9 L479.4,160.1 L474.1,159.9 L475.2,164.5 L480.0,165.7 L481.6,168.8 L479.4,171.9 L472.9,171.7 L465.6,186.3 L459.6,189.2 L457.7,192.3 L445.7,197.7 L442.4,203.6 L428.9,200.9 L420.6,202.9 L411.0,193.4 L403.4,191.4 L398.0,196.7 L387.2,200.6 L378.1,198.8 L375.1,196.4 L370.6,201.5 L371.7,206.2 L362.4,208.9 L333.9,233.0 L335.2,229.4 L333.2,216.1 L336.1,212.8 L336.1,206.9 L322.5,204.8 L324.5,197.8 L322.4,190.5 L314.7,184.1 L303.0,181.9 L300.4,179.3 L303.0,168.9 L300.6,163.4 L296.0,169.5 L285.3,165.7 L281.4,173.6 L276.8,169.8 L260.1,175.8 L255.8,174.3 L246.3,161.7 L238.9,162.7 L230.9,159.4 L223.7,161.2 L211.4,144.5 L200.8,153.7 L200.2,162.6 L194.9,163.4 L187.7,152.7 L193.3,138.5 L183.4,134.0 L182.9,131.0 L175.9,126.5 L164.4,129.2 L165.8,134.0 L163.4,137.9 L156.6,139.1 L149.0,134.8 L145.0,140.7 L145.4,144.4 L138.9,144.1 L133.8,146.5 L121.8,139.3 L122.7,133.1 L112.9,125.4 L100.0,123.4 L88.0,129.7 L85.7,125.6 L91.8,120.4 L89.4,115.3 L105.4,92.4 L104.6,82.7 L109.0,77.6 L110.1,61.6 L114.3,46.4 L113.8,40.5 L125.7,29.4 L125.8,27.6Z"}},"villes":{"Paris":[397.4,266.1],"Chaintreaux":[578.2,672.4],"Melun":[525.6,467.6],"Versailles":[304.3,301.1],"Cergy":[276.2,152.1],"Évry":[430.0,410.0],"Meaux":[618.3,200.4],"Roissy":[466.5,169.3],"Nanterre":[336.5,243.3],"Créteil":[439.7,308.4],"Bobigny":[434.1,231.8],"Rungis":[396.5,333.8],"Nemours":[542.0,639.8],"Fontainebleau":[543.3,553.5],"Marne-la-Vallée":[579.7,275.4]}};
+const root = document.getElementById('root');
+document.getElementById('tbmode').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  root.dataset.mode = b.dataset.m;
+  document.querySelectorAll('#tbmode button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.m===b.dataset.m));
+});
+document.querySelector('#tbmode button[data-m="jour"]').setAttribute('aria-pressed','true');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+
+/* ============ MODULE 1 ============ */
+(function(){
+  const beansG=document.getElementById('beans');
+  const BEANS=[];
+  for(let i=0;i<16;i++){
+    const el=document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+    const x=162+Math.random()*116;
+    el.setAttribute('rx',5.2); el.setAttribute('ry',3.6);
+    el.setAttribute('fill','#5A3A22');
+    el.setAttribute('transform',`rotate(${Math.random()*180} ${x} 0)`);
+    beansG.appendChild(el);
+    BEANS.push({el,x,d:Math.random(),spin:Math.random()*360});
+  }
+  const jet=document.getElementById('jetrect'), fill=document.getElementById('fill'),
+        crema=document.getElementById('crema'), steam=document.getElementById('steam'),
+        grinder=document.getElementById('grinder'), screen=document.getElementById('screen'),
+        pct=document.getElementById('pct'), pbar=document.getElementById('pbar');
+  const blocks=[document.getElementById('b1'),document.getElementById('b2'),document.getElementById('b3'),document.getElementById('b4')];
+  const AT=[0.10,0.34,0.58,0.84];
+
+  function draw(p){
+    p=clamp(p,0,1);
+    // grains : 0 -> 0.28
+    const bp=clamp(p/0.28,0,1);
+    BEANS.forEach(b=>{
+      const t=clamp((bp-b.d*0.55)/0.45,0,1);
+      const y=lerp(-40,64,t);
+      b.el.setAttribute('cx',b.x); b.el.setAttribute('cy',y);
+      b.el.setAttribute('opacity', t<=0?0:(t>=1?0.9:1));
+      b.el.setAttribute('transform',`rotate(${b.spin+t*220} ${b.x} ${y})`);
+    });
+    // écran : 0.06
+    screen.setAttribute('opacity', clamp((p-0.06)/0.08,0,1));
+    // moulin : 0.24 -> 0.44
+    const gp=clamp((p-0.24)/0.20,0,1);
+    grinder.setAttribute('transform',`rotate(${gp*900} 220 246)`);
+    // coulée : 0.44 -> 0.80
+    const jp=clamp((p-0.44)/0.36,0,1);
+    const jh = jp>0 && jp<1 ? 68 : (jp>=1 ? 0 : 0);
+    jet.setAttribute('height', jh);
+    jet.setAttribute('width', jp>0&&jp<1 ? 7+Math.sin(p*220)*1.6 : 0);
+    jet.setAttribute('x', 216.5);
+    // remplissage
+    const lvl=jp*56;
+    fill.setAttribute('y',434-lvl); fill.setAttribute('height',lvl);
+    const cr=jp>0.15?clamp((jp-0.15)/0.5,0,1)*7:0;
+    crema.setAttribute('y',434-lvl); crema.setAttribute('height',cr);
+    // vapeur
+    steam.classList.toggle('on', p>0.62);
+    pct.textContent=Math.round(p*100)+' %';
+    pbar.style.width=(p*100)+'%';
+    blocks.forEach((b,i)=>b.classList.toggle('on', p>=AT[i]));
+  }
+  const sec=document.getElementById('m1');
+  let auto=false;
+  function onScroll(){
+    if(auto) return;
+    const r=sec.getBoundingClientRect();
+    const total=sec.offsetHeight-window.innerHeight;
+    draw(total>0 ? (-r.top)/total : 0);
+  }
+  let tick=false;
+  addEventListener('scroll',()=>{ if(!tick){tick=true;requestAnimationFrame(()=>{onScroll();tick=false;});} },{passive:true});
+  addEventListener('resize',onScroll);
+  const state=document.getElementById('m1state');
+  document.getElementById('m1auto').addEventListener('click',()=>{
+    if(auto) return; auto=true; state.textContent='Animation d\u2019arriv\u00e9e\u2026';
+    const t0=performance.now(), D=5200;
+    (function run(ts){
+      const k=clamp((ts-t0)/D,0,1);
+      draw(k<0.5 ? k*k*2 : 1-Math.pow(-2*k+2,2)/2);
+      if(k<1) requestAnimationFrame(run);
+      else { auto=false; state.textContent='Pilot\u00e9e au d\u00e9filement'; onScroll(); }
+    })(t0);
+  });
+  onScroll();
+})();
+
+/* ============ MODULE 2 ============ */
+(function(){
+  const svg=document.getElementById('map'), V=IDF.villes, NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  // départements
+  for(const code in IDF.deps){
+    const p=el('path',{d:IDF.deps[code].d,class:'dep','data-code':code});
+    svg.appendChild(p);
+  }
+  const LBL={'78':[250,330],'95':[330,120],'93':[470,215],'92':[330,270],'75':[397,258],'94':[452,320],'91':[380,470],'77':[680,430]};
+  for(const code in LBL){
+    svg.appendChild(el('text',{x:LBL[code][0],y:LBL[code][1],'text-anchor':'middle','font-family':'Syne Mono','font-size':13,fill:'var(--ink2)'})).textContent=code;
+  }
+  // itinéraire
+  const STOPS=[['Chaintreaux','Dépôt'],['Melun','Clinique'],['Évry','Atelier'],['Rungis','Entrepôt'],['Créteil','Mairie']];
+  const PANNE=['Meaux','Imprimerie'];
+  const P = n => V[n];
+  const routeA=STOPS.map(s=>P(s[0]));
+  const routeB=[P('Meaux')];
+  const pathLine=(pts)=>'M'+pts.map(p=>p.join(',')).join(' L');
+  const road=el('path',{d:pathLine(routeA),fill:'none',stroke:'var(--ink2)','stroke-width':2,'stroke-dasharray':'6 6',opacity:'.55'});
+  svg.appendChild(road);
+  const detour=el('path',{d:'',fill:'none',stroke:'var(--acc)','stroke-width':2.6,'stroke-dasharray':'8 6'});
+  svg.appendChild(detour);
+  STOPS.forEach((s,i)=>{
+    const [x,y]=P(s[0]);
+    svg.appendChild(el('rect',{x:x-4,y:y-4,width:8,height:8,fill:'var(--ink)'}));
+    svg.appendChild(el('text',{x:x+10,y:y+4,'font-family':'Archivo','font-size':13,fill:'var(--ink)'})).textContent=s[0];
+  });
+  const [mx,my]=P(PANNE[0]);
+  const halo=el('circle',{cx:mx,cy:my,r:6,fill:'none',stroke:'var(--acc)','stroke-width':2,opacity:0});
+  const mark=el('circle',{cx:mx,cy:my,r:5,fill:'var(--acc)',opacity:0});
+  const mtxt=el('text',{x:mx+12,y:my+4,'font-family':'Archivo','font-size':13,fill:'var(--acc)','font-weight':600,opacity:0});
+  mtxt.textContent='Meaux — panne';
+  svg.appendChild(halo);svg.appendChild(mark);svg.appendChild(mtxt);
+  const van=el('g',{});
+  van.appendChild(el('circle',{r:11,fill:'var(--brand)'}));
+  van.appendChild(el('circle',{r:4,fill:'var(--brandfg)'}));
+  svg.appendChild(van);
+
+  // longueur cumulée
+  function build(pts){
+    let L=0,seg=[];
+    for(let i=1;i<pts.length;i++){
+      const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
+      seg.push({a:pts[i-1],b:pts[i],d,acc:L}); L+=d;
+    }
+    return {seg,L};
+  }
+  function at(r,t){
+    const dist=t*r.L;
+    for(const s of r.seg){ if(dist<=s.acc+s.d){ const k=(dist-s.acc)/s.d;
+      return [lerp(s.a[0],s.b[0],k), lerp(s.a[1],s.b[1],k)]; } }
+    const last=r.seg[r.seg.length-1]; return last?last.b:[0,0];
+  }
+  const RA=build(routeA);
+
+  const EV=[
+    [0.00,'07:40','Départ du dépôt de <b>Chaintreaux</b>. Cinq sites au programme.'],
+    [0.16,'08:24','Melun — clinique. Café et fraîches réapprovisionnés.'],
+    [0.36,'09:15','Évry — atelier. Snacks complétés, monnayeur vidé.'],
+    [0.50,'09:41','<b>Appel client</b> : l’imprimerie de Meaux est en panne. Plus de café.',1],
+    [0.54,'09:42','Rémi est notifié sur sa tablette. La tournée se recalcule.',1],
+    [0.80,'10:13','Arrivée à Meaux. Groupe d’infusion bloqué, remplacé sur place.'],
+    [0.94,'10:31','Machine repartie. La tournée reprend sur Rungis et Créteil.']
+  ];
+  const ul=document.getElementById('logl');
+  EV.forEach((e,i)=>{
+    const li=document.createElement('li');
+    if(e[3]) li.className='alert';
+    li.innerHTML=`<time>${e[1]}</time><span>${e[2]}</span>`;
+    ul.appendChild(li);
+  });
+  const lis=[...ul.children];
+  const delay=document.getElementById('delay');
+  const CALL=0.50, ARRIVE=0.80;
+
+  function frame(t){
+    t=clamp(t,0,1);
+    let pos;
+    if(t<CALL){ pos=at(RA, t/CALL*0.62); detour.setAttribute('d',''); }
+    else {
+      const start=at(RA,0.62);
+      const k=clamp((t-CALL)/(ARRIVE-CALL),0,1);
+      pos=[lerp(start[0],mx,k), lerp(start[1],my,k)];
+      detour.setAttribute('d', pathLine([start,[mx,my]]));
+      detour.setAttribute('stroke-dashoffset', -t*120);
+    }
+    van.setAttribute('transform',`translate(${pos[0]},${pos[1]})`);
+    const shown=t>=CALL;
+    mark.setAttribute('opacity',shown?1:0);
+    mtxt.setAttribute('opacity',shown?1:0);
+    halo.setAttribute('opacity', shown&&t<ARRIVE?1:0);
+    halo.classList.toggle('pulse', shown&&t<ARRIVE&&!reduce);
+    document.querySelectorAll('.dep').forEach(d=>d.classList.toggle('hot', shown && d.dataset.code==='77'));
+    EV.forEach((e,i)=>lis[i].classList.toggle('on', t>=e[0]));
+    if(t>=ARRIVE) delay.innerHTML='32 min<span style="font-size:14px;font-family:Archivo;font-weight:400;color:var(--ink2)"> après l’appel</span>';
+    else if(t>=CALL){ const m=Math.round(clamp((t-CALL)/(ARRIVE-CALL),0,1)*32); delay.innerHTML=m+' min<span style="font-size:14px;font-family:Archivo;font-weight:400;color:var(--ink2)"> en route</span>'; }
+    else delay.textContent='—';
+  }
+  let t=0, playing=!reduce, last=0;
+  const scrub=document.getElementById('m2scrub');
+  function loop(ts){
+    if(playing){ const dt=last?(ts-last)/1000:0; last=ts; t+=dt/26; if(t>1){t=1;playing=false;} scrub.value=t*1000; frame(t); }
+    else last=ts;
+    requestAnimationFrame(loop);
+  }
+  scrub.addEventListener('input',()=>{ playing=false; document.getElementById('m2pause').setAttribute('aria-pressed','true'); t=scrub.value/1000; frame(t); });
+  document.getElementById('m2play').addEventListener('click',()=>{ t=0; playing=true; last=0; document.getElementById('m2pause').setAttribute('aria-pressed','false'); });
+  document.getElementById('m2pause').addEventListener('click',e=>{ playing=!playing; last=0; e.currentTarget.setAttribute('aria-pressed', String(!playing)); });
+  frame(0); requestAnimationFrame(loop);
+})();
+
+/* ============ MODULE 3 ============ */
+(function(){
+  const NS='http://www.w3.org/2000/svg', svg=document.getElementById('vend');
+  const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const CAT={
+    A1:['Petite machine à café','Posée sur un meuble. Pour un accueil, un bureau, une équipe de dix.'],
+    A2:['Grande machine à café','Sur pied, forte autonomie. Pour les sites où ça défile toute la journée.'],
+    A3:['Distributeur de snacks','Sucré, salé, confiseries. Les marques que vos équipes achètent déjà.'],
+    A4:['Boissons fraîches','Eau, sodas, jus. L’été dans un atelier, c’est ce qui compte le plus.'],
+    B1:['Fontaine à eau','Bonbonne ou raccordée au réseau, selon ce que permet le local.'],
+    B2:['Le poste complet','Café, fraîches et snacks côte à côte. Un vrai coin pause.'],
+    B3:['Le dépôt gratuit','La machine reste à nous. Vous ne payez ni l’appareil ni l’entretien.'],
+    B4:['Nos services','Installation, réapprovisionnement, maintenance, hygiène.'],
+    C1:['L’entreprise','Chaintreaux, depuis 1982. Toute l’Île-de-France.'],
+    C2:['Nos références','Ateliers, bureaux, collectivités, salles de sport.'],
+    C3:['Demander une visite','Trois questions, deux minutes, rappel sous 24 heures.'],
+    C4:['Nous appeler','01 64 29 55 71 — c’est quelqu’un de l’équipe qui répond.']
+  };
+  const ROWS=['A','B','C'], COLS=[1,2,3,4];
+  // façade
+  svg.appendChild(el('rect',{x:8,y:8,width:604,height:544,fill:'var(--metal)'}));
+  svg.appendChild(el('rect',{x:26,y:26,width:400,height:420,fill:'var(--glass)',stroke:'var(--rule)'}));
+  const items={};
+  ROWS.forEach((r,ri)=>{
+    const y=70+ri*126;
+    svg.appendChild(el('line',{x1:34,y1:y+56,x2:418,y2:y+56,stroke:'var(--shelf)','stroke-width':2}));
+    COLS.forEach((c,ci)=>{
+      const x=46+ci*94;
+      // spirale
+      let d='M'+x+' '+(y+45);
+      for(let k=0;k<5;k++){ d+=` q8.5 ${k%2?-13:13} 17 0`; }
+      const sp=el('path',{d,fill:'none',stroke:'var(--spiral)','stroke-width':3.4,'stroke-linecap':'round','stroke-dasharray':'10 8'});
+      svg.appendChild(sp);
+      const it=el('rect',{x:x+4,y:y+8,width:52,height:34,rx:2,fill:'var(--acc)',opacity:.92});
+      svg.appendChild(it);
+      const lab=el('text',{x:x+30,y:y+30,'text-anchor':'middle','font-family':'Syne Mono','font-size':11,fill:'#FFF'});
+      lab.textContent=r+c; svg.appendChild(lab);
+      items[r+c]={sp,it,lab,x,y};
+    });
+  });
+  // bac
+  svg.appendChild(el('rect',{x:26,y:462,width:400,height:70,fill:'#0C0F11',stroke:'#3A4147'}));
+  svg.appendChild(el('text',{x:36,y:504,'font-family':'Syne Mono','font-size':12,fill:'#7C838B'})).textContent='BAC DE LIVRAISON';
+  // colonne droite
+  svg.appendChild(el('rect',{x:446,y:26,width:148,height:180,fill:'#0C0F11',stroke:'#3A4147'}));
+  const disp=el('text',{x:520,y:126,'text-anchor':'middle','font-family':'Syne Mono','font-size':30,fill:'#E9A94A'});
+  disp.textContent='--'; svg.appendChild(disp);
+  svg.appendChild(el('text',{x:520,y:60,'text-anchor':'middle','font-family':'Syne Mono','font-size':11,fill:'#7C838B'})).textContent='SÉLECTION';
+  svg.appendChild(el('rect',{x:446,y:226,width:148,height:100,fill:'#181C1F',stroke:'#3A4147'}));
+  svg.appendChild(el('text',{x:520,y:282,'text-anchor':'middle','font-family':'Syne Mono','font-size':11,fill:'#7C838B'})).textContent='MONNAYEUR';
+  // clavier
+  const pad=document.getElementById('pad');
+  ROWS.forEach(r=>COLS.forEach(c=>{
+    const b=document.createElement('button'); b.textContent=r+c; b.dataset.code=r+c; pad.appendChild(b);
+  }));
+  const slot=document.getElementById('slot');
+  let busy=false;
+  function dispense(code){
+    if(busy) return; busy=true;
+    document.querySelectorAll('#pad button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.code===code)));
+    disp.textContent=code;
+    const {sp,it,lab,x,y}=items[code];
+    const dur=reduce?0:900;
+    let start=null;
+    const x0=+it.getAttribute('x'), y0=+it.getAttribute('y');
+    function step(ts){
+      if(!start) start=ts;
+      const k=dur?clamp((ts-start)/dur,0,1):1;
+      sp.setAttribute('stroke-dashoffset', -k*140);
+      const fall=k<0.45?0:(k-0.45)/0.55;
+      const yy=y0+fall*fall*(470-y0);
+      it.setAttribute('y',yy); lab.setAttribute('y',yy+22);
+      it.setAttribute('opacity', fall>0.9?0:.92); lab.setAttribute('opacity', fall>0.9?0:1);
+      if(k<1) requestAnimationFrame(step);
+      else{
+        const [t,d]=CAT[code];
+        slot.innerHTML=`<span class="ref">${code}</span><b class="h" style="font-size:21px">${t}</b><p style="margin:0;font-size:15px;color:var(--ink2)">${d}</p>
+          <span style="margin-top:auto"><span class="btn" style="display:inline-block">Ouvrir la page</span></span>`;
+        slot.classList.remove('deliver'); void slot.offsetWidth; slot.classList.add('deliver');
+        setTimeout(()=>{ it.setAttribute('y',y0); lab.setAttribute('y',y0+22);
+          it.setAttribute('opacity',.92); lab.setAttribute('opacity',1); busy=false; }, 500);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+  pad.addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) dispense(b.dataset.code); });
+})();
+</script>
